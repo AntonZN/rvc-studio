@@ -1,0 +1,4 @@
+VOCAL_STEM = "Vocals"
+INST_STEM = "Instrumental"
+
+MDX_NET_FREQ_CUT = [VOCAL_STEM, INST_STEM]

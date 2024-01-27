@@ -1,0 +1,73 @@
+version: '3'
+
+services:
+  rabbitmq:
+    image: 'bitnami/rabbitmq:latest'
+    volumes:
+      - rabbitmqstats_data:/bitnami/rabbitmq/mnesia
+    environment:
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - RABBITMQ_VM_MEMORY_HIGH_WATERMARK=0.1
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "88:80"
+    volumes:
+      - ./nginx/conf/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/logs:/var/log/nginx
+      - storage:/storage
+    depends_on:
+      - admin
+      - api
+    env_file:
+      - .env
+
+  db:
+    image: postgres:13
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  admin:
+    build:
+      context: ./admin
+      dockerfile: Dockerfile
+    volumes:
+      - storage:/storage
+    depends_on:
+      - db
+    env_file:
+      - .env
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    volumes:
+      - storage:/storage
+    depends_on:
+      - db
+      - rabbitmq
+    env_file:
+      - .env
+
+  studio:
+    build:
+      context: ./studio
+      dockerfile: Dockerfile
+    volumes:
+      - storage:/storage
+    depends_on:
+      - db
+      - rabbitmq
+    env_file:
+      - .env
+
+volumes:
+  postgres_data:
+  rabbitmqstats_data:
+  storage:
