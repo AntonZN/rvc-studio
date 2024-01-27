@@ -208,7 +208,7 @@ async def record_status(record_id: str):
 
 @router.get(
     "/tts/{tts_id}/",
-    response_model=RecordStatusSchema,
+    response_model=TTSSchema,
     description="Статус и результат обработки TTS",
 )
 async def tts_status(tts_id: str):
