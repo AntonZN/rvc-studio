@@ -24,7 +24,7 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG", default=True)
 USE_POSTGRES = env("USE_POSTGRES", default=True)
 ALLOWED_HOSTS = ["*"]
-
+CSRF_TRUSTED_ORIGINS = ["https://rvc.vocalremove.online"]
 
 # Application definition
 
