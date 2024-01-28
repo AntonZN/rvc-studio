@@ -52,12 +52,13 @@ def tts(tts_id, model_name, text: str, lang: str, speaker=0):
     result_filepath = f"{settings.OUTPUT_FOLDER}/{tts_id}/{model_name}.mp3"
     model = BarkModel.from_pretrained(f"{BASE_MODELS_DIR}/bark-small")
     processor = BarkProcessor.from_pretrained(f"{BASE_MODELS_DIR}/bark-small")
+    loguru.logger.debug(f"{BASE_MODELS_DIR}/bark-small 00000")
     inputs = processor(text, voice_preset=f"v2/{lang}_speaker_{speaker}")
-    attention_mask = inputs.ne(processor.pad_token_id)
+    print(inputs)
     speech_output = (
-        model.generate(**inputs, attention_mask=attention_mask).cpu().numpy().squeeze()
-        * MAX_INT16
+        model.generate(**inputs).cpu().numpy().squeeze() * MAX_INT16
     ).astype(np.int16)
+    loguru.logger.debug(f"{BASE_MODELS_DIR}/bark-small 11111")
     sampling_rate = model.generation_config.sample_rate
     audio_data = audio2bytes(speech_output, sr=sampling_rate)
     output_audio = clone_vocal(bytes2audio(audio_data), model_name)
