@@ -98,26 +98,36 @@ async def handle(queue_name, amq_message: str) -> None:
             model_name = None
             clone_type = None
 
-        process(queue_name, record, model_name, clone_type)
+        try:
+            process(queue_name, record, model_name, clone_type)
+        except Exception:
+            record.status = Status.ERROR
 
         await record.save()
     else:
         loguru.logger.debug(f"TTS {message_data}")
         tts_obj = await TTS.get(id=message_data["tts_id"])
+
         try:
             model = await RVCModel.get(id=message_data["model_id"])
         except Exception as e:
             tts_obj.status = Status.ERROR
             await tts_obj.save()
             return
+
         model_name = Path(model.file).stem
-        process_tts(
-            tts_obj,
-            message_data["text"],
-            message_data["lang"],
-            message_data["speaker"],
-            model_name,
-        )
+
+        try:
+            process_tts(
+                tts_obj,
+                message_data["text"],
+                message_data["lang"],
+                message_data["speaker"],
+                model_name,
+            )
+        except Exception:
+            tts_obj.status = Status.ERROR
+
         await tts_obj.save()
 
 
