@@ -54,7 +54,6 @@ def tts(tts_id, model_name, text: str, lang: str, speaker=0):
     processor = BarkProcessor.from_pretrained(f"{BASE_MODELS_DIR}/bark-small")
     loguru.logger.debug(f"{BASE_MODELS_DIR}/bark-small 00000")
     inputs = processor(text, voice_preset=f"v2/{lang}_speaker_{speaker}")
-    print(inputs)
     speech_output = (
         model.generate(**inputs).cpu().numpy().squeeze() * MAX_INT16
     ).astype(np.int16)
