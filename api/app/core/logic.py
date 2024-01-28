@@ -16,7 +16,7 @@ async def publish(message: Message, key):
     connection = await connect(
         f"amqp://{settings.RABBITMQ_USERNAME}:{settings.RABBITMQ_PASSWORD}@{settings.RABBITMQ_HOST}/"
     )
-
+    message.headers = {"expiration": "600000"}
     async with connection:
         channel = await connection.channel()
 
