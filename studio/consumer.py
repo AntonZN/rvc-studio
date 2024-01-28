@@ -86,7 +86,12 @@ async def handle(queue_name, amq_message: str) -> None:
         record = await Record.get(id=message_data["record_id"])
 
         if queue_name in ["cover", "clone"]:
-            model = await RVCModel.get(id=message_data["model_id"])
+            try:
+                model = await RVCModel.get(id=message_data["model_id"])
+            except Exception as e:
+                record.status = Status.ERROR
+                await record.save()
+                return
             model_name = Path(model.file).stem
             clone_type = message_data["type"]
         else:
@@ -99,7 +104,12 @@ async def handle(queue_name, amq_message: str) -> None:
     else:
         loguru.logger.debug(f"TTS {message_data}")
         tts_obj = await TTS.get(id=message_data["tts_id"])
-        model = await RVCModel.get(id=message_data["model_id"])
+        try:
+            model = await RVCModel.get(id=message_data["model_id"])
+        except Exception as e:
+            tts_obj.status = Status.ERROR
+            await tts_obj.save()
+            return
         model_name = Path(model.file).stem
         process_tts(
             tts_obj,
