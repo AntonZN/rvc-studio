@@ -15,10 +15,10 @@ def run_async_task(queue_name, worker):
 
 
 if __name__ == "__main__":
-    clone_process = 3
-    splitter_process = 3
+    clone_process = 2
+    splitter_process = 2
     cover_process = 2
-    tts_process = 4
+    tts_process = 2
 
     processes = cover_process + splitter_process + clone_process + tts_process
 
