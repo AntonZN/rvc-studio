@@ -1,8 +1,10 @@
+import asyncio
 import json
 from pathlib import Path
 
 import aio_pika
 import loguru
+from aio_pika import exceptions
 from aio_pika.abc import AbstractRobustConnection
 from tortoise import Tortoise
 
@@ -120,21 +122,28 @@ async def get_connection() -> AbstractRobustConnection:
 
 async def consume(queue_name: str, worker) -> None:
     await Tortoise.init(db_url=settings.DATABASE_URI, modules={"models": ["db_models"]})
-    connection = await get_connection()
-    channel = await connection.channel()
-    exchange = await channel.declare_exchange(queue_name, aio_pika.ExchangeType.DIRECT)
+    while True:
+        try:
+            connection = await get_connection()
+            channel = await connection.channel()
+            exchange = await channel.declare_exchange(
+                queue_name, aio_pika.ExchangeType.DIRECT
+            )
 
-    queue = await channel.declare_queue(
-        queue_name,
-        durable=True,
-        auto_delete=False,
-    )
-    await queue.bind(exchange, queue_name)
+            queue = await channel.declare_queue(
+                queue_name,
+                durable=True,
+                auto_delete=False,
+            )
+            await queue.bind(exchange, queue_name)
 
-    loguru.logger.debug(f"# Worker [{worker}] Start listing queue {queue_name}")
+            loguru.logger.debug(f"# Worker [{worker}] Start listing queue {queue_name}")
 
-    async with queue.iterator() as queue_iter:
-        async for message in queue_iter:
-            loguru.logger.debug(f"Worker[{worker}][{queue_name}] New message)")
-            await handle(queue_name, message.body.decode())
-            await message.ack()
+            async with queue.iterator() as queue_iter:
+                async for message in queue_iter:
+                    loguru.logger.debug(f"Worker[{worker}][{queue_name}] New message)")
+                    await handle(queue_name, message.body.decode())
+                    await message.ack()
+        except exceptions.AMQPError as e:
+            loguru.logger.error(e)
+            await asyncio.sleep(5)
