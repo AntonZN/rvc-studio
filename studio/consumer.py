@@ -180,3 +180,6 @@ async def consume(loop, queue_name: str, worker) -> None:
         except exceptions.AMQPError as e:
             logging.error(f"Error during consume: {e}")
             await asyncio.sleep(5)
+        except Exception as e:
+            logging.error(f"Error during consume: {e}")
+            await asyncio.sleep(5)
