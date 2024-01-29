@@ -163,6 +163,7 @@ async def consume(queue_name: str, worker) -> None:
                 async for message in queue_iter:
                     loguru.logger.debug(f"Worker[{worker}][{queue_name}] New message)")
                     await handle(queue_name, message.body.decode())
+                    loguru.logger.debug(f"Worker[{worker}][{queue_name}] Message ASK)")
                     await message.ack()
         except exceptions.AMQPError as e:
             loguru.logger.error(e)
