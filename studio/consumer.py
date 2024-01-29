@@ -186,6 +186,7 @@ async def consume(queue_name: str, worker) -> None:
                     status = await handle(queue_name, message.body.decode())
                     if status != "processing":
                         await message.ack()
-        except exceptions.AMQPError as e:
+        except Exception as e:
             loguru.logger.error(e)
             await asyncio.sleep(5)
+            continue
