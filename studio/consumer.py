@@ -136,7 +136,7 @@ async def get_connection() -> AbstractRobustConnection:
         host=settings.RABBITMQ_HOST,
         login=settings.RABBITMQ_USERNAME,
         password=settings.RABBITMQ_PASSWORD,
-        timeout=60,
+        timeout=3600,
     )
 
 
