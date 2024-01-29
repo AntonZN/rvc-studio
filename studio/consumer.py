@@ -171,7 +171,12 @@ async def consume(loop, queue_name: str, worker) -> None:
             loguru.logger.debug(f"# Worker [{worker}] Start listing queue {queue_name}")
 
             while True:
-                message = await queue.get(no_ack=False)
+                try:
+                    message = await queue.get(no_ack=False)
+                except exceptions.QueueEmpty:
+                    await asyncio.sleep(5)
+                    continue
+
                 if message is None:
                     await asyncio.sleep(5)
                     continue
