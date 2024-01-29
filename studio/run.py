@@ -10,7 +10,7 @@ settings = get_settings()
 def run_async_task(queue_name, worker):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    future = asyncio.ensure_future(consume(loop, queue_name, worker))
+    future = asyncio.ensure_future(consume(queue_name, worker))
     loop.run_until_complete(future)
 
 
