@@ -87,6 +87,12 @@ async def handle(queue_name, amq_message: str) -> None:
     if queue_name != "tts":
         record = await Record.get(id=message_data["record_id"])
 
+        if record.status in [Status.PROCESSING, Status.ERROR, Status.DONE]:
+            return
+
+        record.status = Status.PROCESSING
+        await record.save()
+
         if queue_name in ["cover", "clone"]:
             try:
                 model = await RVCModel.get(id=message_data["model_id"])
@@ -166,7 +172,6 @@ async def consume(loop, queue_name: str, worker) -> None:
                     queue_name,
                     durable=True,
                     auto_delete=False,
-                    arguments={'x-message-ttl': 1000*60*10}
                 )
                 await queue.bind(exchange, queue_name)
 

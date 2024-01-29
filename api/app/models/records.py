@@ -9,6 +9,7 @@ class Status(str, Enum):
     DONE = "done"
     ERROR = "error"
     PENDING = "pending"
+    PROCESSING = "processing"
     DELETED = "deleted"
 
 

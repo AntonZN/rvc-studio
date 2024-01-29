@@ -5,6 +5,7 @@ class Status(models.TextChoices):
     DONE = "done"
     ERROR = "error"
     PENDING = "pending"
+    PROCESSING = "processing"
     DELETED = "deleted"
 
 
