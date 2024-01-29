@@ -155,35 +155,32 @@ async def consume(loop, queue_name: str, worker) -> None:
 
 
     while True:
-        async with channel_pool.acquire() as channel:
-            await channel.set_qos(1)
-            exchange = await channel.declare_exchange(
-                queue_name, aio_pika.ExchangeType.DIRECT
-            )
+        try:
+            async with channel_pool.acquire() as channel:
+                await channel.set_qos(1)
+                exchange = await channel.declare_exchange(
+                    queue_name, aio_pika.ExchangeType.DIRECT
+                )
 
-            queue = await channel.declare_queue(
-                queue_name,
-                durable=True,
-                auto_delete=False,
-            )
-            await queue.bind(exchange, queue_name)
+                queue = await channel.declare_queue(
+                    queue_name,
+                    durable=True,
+                    auto_delete=False,
+                    arguments={'x-message-ttl': 1000*60*10}
+                )
+                await queue.bind(exchange, queue_name)
 
-            loguru.logger.debug(f"# Worker [{worker}] Start listing queue {queue_name}")
+                loguru.logger.debug(f"# Worker [{worker}] Start listing queue {queue_name}")
 
-            while True:
-                try:
-                    message = await queue.get(no_ack=False)
-                except exceptions.QueueEmpty:
-                    await asyncio.sleep(5)
-                    continue
-
-                if message is None:
-                    await asyncio.sleep(5)
-                    continue
-
-                loguru.logger.debug(f"Worker[{worker}][{queue_name}] New message {message})")
-                await handle(queue_name, message.body.decode())
-                loguru.logger.debug(f"Worker[{worker}][{queue_name}] Message ACK")
-                await message.ack()
-
-
+                async with queue.iterator() as queue_iter:
+                    async for message in queue_iter:
+                        loguru.logger.debug(f"Worker[{worker}][{queue_name}] New message {message})")
+                        await handle(queue_name, message.body.decode())
+                        loguru.logger.debug(f"Worker[{worker}][{queue_name}] Message ASK)")
+                        await message.ack()
+        except exceptions.AMQPError as e:
+            loguru.logger.error(f"Error during consume: {e}")
+            await asyncio.sleep(5)
+        except Exception as e:
+            loguru.logger.error(f"Error during consume: {e}")
+            await asyncio.sleep(5)
