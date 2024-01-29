@@ -179,10 +179,18 @@ async def consume(queue_name: str, worker) -> None:
 
         loguru.logger.debug(f"# Worker [{worker}] Start listing queue {queue_name}")
 
-        async with queue.iterator() as queue_iter:
-            async for message in queue_iter:
-                loguru.logger.debug(f"Worker[{worker}][{queue_name}] New message {message.body.decode()}")
-                status = await handle(queue_name, message.body.decode())
-                if status != "processing":
-                    await message.ack()
-
+        try:
+            async with queue.iterator() as queue_iter:
+                async for message in queue_iter:
+                    loguru.logger.debug(f"Worker[{worker}][{queue_name}] New message)")
+                    status = await handle(queue_name, message.body.decode())
+                    if status != "processing":
+                        loguru.logger.debug(f"Worker[{worker}][{queue_name}] DONE)")
+                        await message.ack()
+                        loguru.logger.debug(f"Worker[{worker}][{queue_name}] ASK)")
+        except Exception as e:
+            loguru.logger.error(e)
+            await asyncio.sleep(5)
+            await channel.close()
+            await connection.close()
+            continue
