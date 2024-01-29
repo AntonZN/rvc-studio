@@ -17,7 +17,8 @@ async def publish(message: Message, key):
         f"amqp://{settings.RABBITMQ_USERNAME}:{settings.RABBITMQ_PASSWORD}@{settings.RABBITMQ_HOST}/"
     )
     message.headers = {"expiration": "600000"}
-    message.expiration = "600000"
+    expiration_time = datetime.timedelta(milliseconds=int("600000"))
+    message.expiration = expiration_time
 
     async with connection:
         channel = await connection.channel()
