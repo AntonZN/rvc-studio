@@ -164,29 +164,25 @@ async def get_channel(connection_pool) -> aio_pika.Channel:
 async def consume(queue_name: str, worker) -> None:
     await Tortoise.init(db_url=settings.DATABASE_URI, modules={"models": ["db_models"]})
     while True:
-        try:
-            connection = await get_connection()
-            channel = await connection.channel()
-            exchange = await channel.declare_exchange(
-                queue_name, aio_pika.ExchangeType.DIRECT
-            )
+        connection = await get_connection()
+        channel = await connection.channel()
+        exchange = await channel.declare_exchange(
+            queue_name, aio_pika.ExchangeType.DIRECT
+        )
 
-            queue = await channel.declare_queue(
-                queue_name,
-                durable=True,
-                auto_delete=False,
-            )
-            await queue.bind(exchange, queue_name)
+        queue = await channel.declare_queue(
+            queue_name,
+            durable=True,
+            auto_delete=False,
+        )
+        await queue.bind(exchange, queue_name)
 
-            loguru.logger.debug(f"# Worker [{worker}] Start listing queue {queue_name}")
+        loguru.logger.debug(f"# Worker [{worker}] Start listing queue {queue_name}")
 
-            async with queue.iterator() as queue_iter:
-                async for message in queue_iter:
-                    loguru.logger.debug(f"Worker[{worker}][{queue_name}] New message)")
-                    status = await handle(queue_name, message.body.decode())
-                    if status != "processing":
-                        await message.ack()
-        except Exception as e:
-            loguru.logger.error(e)
-            await asyncio.sleep(5)
-            continue
+        async with queue.iterator() as queue_iter:
+            async for message in queue_iter:
+                loguru.logger.debug(f"Worker[{worker}][{queue_name}] New message)")
+                status = await handle(queue_name, message.body.decode())
+                if status != "processing":
+                    await message.ack()
+
