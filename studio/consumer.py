@@ -78,6 +78,7 @@ def process(queue_name, record, model_name, clone_type):
 
 
 async def handle(queue_name, amq_message: str) -> None:
+    loguru.logger.debug(f"HANDLE {queue_name}")
     try:
         message_data = json.loads(amq_message)
     except json.JSONDecodeError:
