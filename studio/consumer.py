@@ -6,6 +6,7 @@ import aio_pika
 import loguru
 from aio_pika import exceptions
 from aio_pika.abc import AbstractRobustConnection
+from aio_pika.pool import Pool
 from tortoise import Tortoise
 
 from cfg import get_settings
@@ -139,32 +140,42 @@ async def get_connection() -> AbstractRobustConnection:
         timeout=3600,
     )
 
+async def get_channel(connection_pool) -> aio_pika.Channel:
+    await asyncio.sleep(10)
+    async with connection_pool.acquire() as connection:
+        return await connection.channel()
 
-async def consume(queue_name: str, worker) -> None:
+
+async def consume(loop, queue_name: str, worker) -> None:
     await Tortoise.init(db_url=settings.DATABASE_URI, modules={"models": ["db_models"]})
+
+    connection_pool: Pool = Pool(get_connection, max_size=5, loop=loop)
+    channel_pool: Pool = Pool(get_channel, connection_pool, max_size=5, loop=loop)
+
+
     while True:
         try:
-            connection = await get_connection()
-            channel = await connection.channel()
-            exchange = await channel.declare_exchange(
-                queue_name, aio_pika.ExchangeType.DIRECT
-            )
+            async with channel_pool.acquire() as channel:
+                await channel.set_qos(1)
+                exchange = await channel.declare_exchange(
+                    queue_name, aio_pika.ExchangeType.DIRECT
+                )
 
-            queue = await channel.declare_queue(
-                queue_name,
-                durable=True,
-                auto_delete=False,
-            )
-            await queue.bind(exchange, queue_name)
+                queue = await channel.declare_queue(
+                    queue_name,
+                    durable=True,
+                    auto_delete=False,
+                )
+                await queue.bind(exchange, queue_name)
 
-            loguru.logger.debug(f"# Worker [{worker}] Start listing queue {queue_name}")
+                loguru.logger.debug(f"# Worker [{worker}] Start listing queue {queue_name}")
 
-            async with queue.iterator() as queue_iter:
-                async for message in queue_iter:
-                    loguru.logger.debug(f"Worker[{worker}][{queue_name}] New message)")
-                    await handle(queue_name, message.body.decode())
-                    loguru.logger.debug(f"Worker[{worker}][{queue_name}] Message ASK)")
-                    await message.ack()
+                async with queue.iterator() as queue_iter:
+                    async for message in queue_iter:
+                        loguru.logger.debug(f"Worker[{worker}][{queue_name}] New message)")
+                        await handle(queue_name, message.body.decode())
+                        loguru.logger.debug(f"Worker[{worker}][{queue_name}] Message ASK)")
+                        await message.ack()
         except exceptions.AMQPError as e:
-            loguru.logger.error(e)
+            logging.error(f"Error during consume: {e}")
             await asyncio.sleep(5)
