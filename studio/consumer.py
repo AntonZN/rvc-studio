@@ -82,13 +82,13 @@ async def handle(queue_name, amq_message: str) -> None:
     try:
         message_data = json.loads(amq_message)
     except json.JSONDecodeError:
-        return None
+        return "done"
 
     if queue_name != "tts":
         record = await Record.get(id=message_data["record_id"])
 
         if record.status in [Status.PROCESSING, Status.ERROR, Status.DONE]:
-            return
+            return record.status
 
         record.status = Status.PROCESSING
         await record.save()
@@ -99,7 +99,7 @@ async def handle(queue_name, amq_message: str) -> None:
             except Exception as e:
                 record.status = Status.ERROR
                 await record.save()
-                return
+                return "done"
             model_name = Path(model.file).stem
             clone_type = message_data["type"]
         else:
@@ -112,16 +112,23 @@ async def handle(queue_name, amq_message: str) -> None:
             record.status = Status.ERROR
 
         await record.save()
+        return "done"
     else:
         loguru.logger.debug(f"TTS {message_data}")
         tts_obj = await TTS.get(id=message_data["tts_id"])
+
+        if tts_obj.status in [Status.PROCESSING, Status.ERROR, Status.DONE]:
+            return tts_obj.status
+
+        tts_obj.status = Status.PROCESSING
+        await tts_obj.save()
 
         try:
             model = await RVCModel.get(id=message_data["model_id"])
         except Exception as e:
             tts_obj.status = Status.ERROR
             await tts_obj.save()
-            return
+            return "done"
 
         model_name = Path(model.file).stem
 
@@ -137,6 +144,7 @@ async def handle(queue_name, amq_message: str) -> None:
             tts_obj.status = Status.ERROR
 
         await tts_obj.save()
+        return "done"
 
 
 async def get_connection() -> AbstractRobustConnection:
@@ -180,9 +188,10 @@ async def consume(loop, queue_name: str, worker) -> None:
                 async with queue.iterator() as queue_iter:
                     async for message in queue_iter:
                         loguru.logger.debug(f"Worker[{worker}][{queue_name}] New message {message})")
-                        await handle(queue_name, message.body.decode())
+                        status = await handle(queue_name, message.body.decode())
                         loguru.logger.debug(f"Worker[{worker}][{queue_name}] Message ASK)")
-                        await message.ack()
+                        if status != "processing":
+                            await message.ack()
         except exceptions.AMQPError as e:
             loguru.logger.error(f"Error during consume: {e}")
             await asyncio.sleep(5)
