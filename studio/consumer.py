@@ -181,7 +181,7 @@ async def consume(queue_name: str, worker) -> None:
 
         async with queue.iterator() as queue_iter:
             async for message in queue_iter:
-                loguru.logger.debug(f"Worker[{worker}][{queue_name}] New message)")
+                loguru.logger.debug(f"Worker[{worker}][{queue_name}] New message {message.body.decode()}")
                 status = await handle(queue_name, message.body.decode())
                 if status != "processing":
                     await message.ack()
