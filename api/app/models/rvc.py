@@ -12,6 +12,10 @@ class RVCModel(Model):
     fr = fields.CharField(max_length=256)
     hi = fields.CharField(max_length=256)
     ko = fields.CharField(max_length=256)
+    description = fields.TextField()
+    lock = fields.BooleanField()
+    hide = fields.BooleanField()
+    image = fields.TextField()
 
 
     class Meta:
