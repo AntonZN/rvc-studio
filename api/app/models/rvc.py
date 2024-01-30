@@ -5,17 +5,17 @@ from tortoise.models import Model
 
 class RVCModel(Model):
     id = fields.IntField(pk=True)
-    ru = fields.CharField(max_length=256)
-    en = fields.CharField(max_length=256)
-    es = fields.CharField(max_length=256)
-    pt = fields.CharField(max_length=256)
-    fr = fields.CharField(max_length=256)
-    hi = fields.CharField(max_length=256)
-    ko = fields.CharField(max_length=256)
-    description = fields.TextField()
-    lock = fields.BooleanField()
-    hide = fields.BooleanField()
-    image = fields.TextField()
+    ru = fields.CharField(max_length=256, null=True)
+    en = fields.CharField(max_length=256, null=True)
+    es = fields.CharField(max_length=256, null=True)
+    pt = fields.CharField(max_length=256, null=True)
+    fr = fields.CharField(max_length=256, null=True)
+    hi = fields.CharField(max_length=256, null=True)
+    ko = fields.CharField(max_length=256, null=True)
+    description = fields.TextField(null=True)
+    lock = fields.BooleanField(default=False)
+    hide = fields.BooleanField(default=False)
+    image = fields.TextField(null=True)
 
 
     class Meta:
