@@ -5,7 +5,14 @@ from tortoise.models import Model
 
 class RVCModel(Model):
     id = fields.IntField(pk=True)
-    name = fields.CharField(max_length=256)
+    ru = fields.CharField(max_length=256)
+    en = fields.CharField(max_length=256)
+    es = fields.CharField(max_length=256)
+    pt = fields.CharField(max_length=256)
+    fr = fields.CharField(max_length=256)
+    hi = fields.CharField(max_length=256)
+    ko = fields.CharField(max_length=256)
+
 
     class Meta:
         table = "rvc_rvcmodel"
