@@ -24,4 +24,9 @@ router = APIRouter()
     },
 )
 async def get_rvc_list():
-    return await RVCModelSchema.from_queryset(RVCModel.all())
+    models = await RVCModelSchema.from_queryset(RVCModel.all())
+
+    for model in models:
+        model.image = f"{settings.MEDIA_URL}/storage/{model.image}"
+
+    return models
