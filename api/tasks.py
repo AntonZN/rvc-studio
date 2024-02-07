@@ -33,7 +33,7 @@ async def remove_records_older_than_24_hours():
 
     async for record in Record.filter(
         created_at__lte=str(arrow.utcnow().shift(hours=-24))
-    ).values_list(
+    ).values(
         "id", "file_path", "vocal_path", "instrumental_path", "clone_path", "cover_path"
     ):
         files = [
