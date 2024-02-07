@@ -7,4 +7,3 @@ from .models import RVCModel
 @admin.register(RVCModel)
 class RVCModelAdmin(OrderedModelAdmin):
     list_display = ("__str__", "order", "move_up_down_links")
-    list_editable = ("order",)
