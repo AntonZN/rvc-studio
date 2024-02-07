@@ -3,32 +3,32 @@ from django.db import models
 from ordered_model.models import OrderedModel
 
 class Lang(models.TextChoices):
-    RU: str = ("ru", "ru")
-    DE: str = ("de", "de")
-    EN: str = ("en", "en")
-    ES: str = ("es", "es")
-    FR: str = ("fr", "fr")
-    HI: str = ("hi", "hi")
-    IT: str = ("it", "it")
-    JA: str = ("ja", "ja")
-    KO: str = ("ko", "ko")
-    PL: str = ("pl", "pl")
-    PT: str = ("pt", "pt")
-    TR: str = ("tr", "tr")
-    ZH: str = ("zh", "zh")
+    RU = "ru", "ru"
+    DE = "de", "de"
+    EN = "en", "en"
+    ES = "es", "es"
+    FR = "fr", "fr"
+    HI = "hi", "hi"
+    IT = "it", "it"
+    JA = "ja", "ja"
+    KO = "ko", "ko"
+    PL = "pl", "pl"
+    PT = "pt", "pt"
+    TR = "tr", "tr"
+    ZH = "zh", "zh"
 
 
 class Speaker(models.TextChoices):
-    NULL: str = ("0", "0")
-    ONE: str = ("1", "1")
-    TWO: str = ("2", "2")
-    FRE: str = ("3", "3")
-    FOUR: str = ("4", "4")
-    FIVE: str = ("5", "5")
-    SIX: str = ("6", "6")
-    SEVEN: str = ("7", "7")
-    EIGHT: str = ("8", "8")
-    NINE: str = ("9", "9")
+    NULL = "0", "0"
+    ONE = "1", "1"
+    TWO = "2", "2"
+    FRE = "3", "3"
+    FOUR = "4", "4"
+    FIVE = "5", "5"
+    SIX = "6", "6"
+    SEVEN = "7", "7"
+    EIGHT = "8", "8"
+    NINE = "9", "9"
 
 
 class RVCModel(OrderedModel):
