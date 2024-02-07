@@ -42,6 +42,9 @@ class RVCModel(Model):
     hide = fields.BooleanField(default=False)
     image = fields.TextField(null=True)
     file = fields.TextField()
+    order = fields.IntField(null=True)
+    speaker = fields.CharField(max_length=256, null=True)
+    lang = fields.CharField(max_length=256, null=True)
 
     class Meta:
         table = "rvc_rvcmodel"

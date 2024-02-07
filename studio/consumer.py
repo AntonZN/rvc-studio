@@ -133,12 +133,22 @@ async def handle(queue_name, amq_message: str):
 
         model_name = Path(model.file).stem
 
+        if model.speaker:
+            speaker = model.speaker
+        else:
+            speaker = message_data["speaker"]
+
+        if model.lang:
+            lang = model.lang
+        else:
+            lang = message_data["lang"]
+
         try:
             process_tts(
                 tts_obj,
                 message_data["text"],
-                message_data["lang"],
-                message_data["speaker"],
+                lang,
+                speaker,
                 model_name,
             )
         except Exception:
