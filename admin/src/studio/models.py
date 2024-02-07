@@ -23,6 +23,6 @@ class Record(models.Model):
 
 class TTS(models.Model):
     id = models.UUIDField(primary_key=True)
-    status = models.CharField(choices=Status, default=Status.PENDING, max_length=100)
+    status = models.CharField(choices=Status.choices, default=Status.PENDING, max_length=100)
     voice_path = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
