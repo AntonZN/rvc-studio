@@ -2,11 +2,11 @@ from django.db import models
 
 
 class Status(models.TextChoices):
-    DONE = "done"
-    ERROR = "error"
-    PENDING = "pending"
-    PROCESSING = "processing"
-    DELETED = "deleted"
+    DONE = "done", "done"
+    ERROR = "error", "error"
+    PENDING = "pending", "pending"
+    PROCESSING = "processing", "processing"
+    DELETED = "deleted", "deleted"
 
 
 class Record(models.Model):
