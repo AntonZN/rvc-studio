@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "src.rvc.apps.RvcConfig",
     "src.studio.apps.StudioConfig",
+    "ordered_model",
 ]
 
 MIDDLEWARE = [
