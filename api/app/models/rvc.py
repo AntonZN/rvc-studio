@@ -16,9 +16,10 @@ class RVCModel(Model):
     lock = fields.BooleanField(default=False)
     hide = fields.BooleanField(default=False)
     image = fields.TextField(null=True)
-
+    order = fields.IntField(null=True)
 
     class Meta:
+        ordering = ["order"]
         table = "rvc_rvcmodel"
 
 
