@@ -10,6 +10,7 @@ class Status(str, Enum):
     PENDING = "pending"
     PROCESSING = "processing"
     DELETED = "deleted"
+    CANCELED = "canceled"
 
 
 class Record(Model):

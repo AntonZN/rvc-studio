@@ -206,6 +206,18 @@ async def record_status(record_id: str):
     return record
 
 
+@router.put(
+    "/record/{record_id}/cancel/",
+    response_model=TTSSchema,
+    description="Отменить обработку записи",
+)
+async def tts_cancel(record_id: str):
+    record = await Record.get(id=record_id)
+    record.status = Status.CANCELED
+    await record.save()
+    return record
+
+
 @router.get(
     "/tts/{tts_id}/",
     response_model=TTSSchema,
@@ -217,6 +229,18 @@ async def tts_status(tts_id: str):
     if tts.voice_path:
         tts.voice_path = f"{settings.MEDIA_URL}{tts.voice_path}"
 
+    return tts
+
+
+@router.put(
+    "/tts/{tts_id}/cancel/",
+    response_model=TTSSchema,
+    description="Отменить TTS",
+)
+async def tts_cancel(tts_id: str):
+    tts = await TTS.get(id=tts_id)
+    tts.status = Status.CANCELED
+    await tts.save()
     return tts
 
 

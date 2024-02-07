@@ -77,7 +77,7 @@ def process(queue_name, record, model_name, clone_type):
     return record
 
 
-async def handle(queue_name, amq_message: str) -> None:
+async def handle(queue_name, amq_message: str):
     loguru.logger.debug(f"HANDLE {queue_name}")
     try:
         message_data = json.loads(amq_message)
@@ -87,7 +87,7 @@ async def handle(queue_name, amq_message: str) -> None:
     if queue_name != "tts":
         record = await Record.get(id=message_data["record_id"])
 
-        if record.status in [Status.PROCESSING, Status.ERROR, Status.DONE]:
+        if record.status in [Status.PROCESSING, Status.ERROR, Status.DONE, Status.CANCELED]:
             return record.status
 
         record.status = Status.PROCESSING
@@ -118,7 +118,7 @@ async def handle(queue_name, amq_message: str) -> None:
         loguru.logger.debug(f"TTS {message_data}")
         tts_obj = await TTS.get(id=message_data["tts_id"])
 
-        if tts_obj.status in [Status.PROCESSING, Status.ERROR, Status.DONE]:
+        if tts_obj.status in [Status.PROCESSING, Status.ERROR, Status.DONE, Status.CANCELED]:
             return tts_obj.status
 
         tts_obj.status = Status.PROCESSING
