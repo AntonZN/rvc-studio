@@ -17,7 +17,7 @@
       <sourceFolder url="file://$MODULE_DIR$/api/app" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/studio" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="rvcstudio" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="rvc-studio" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TemplatesService">
