@@ -51,6 +51,7 @@ def tts(tts_id, model_name, text: str, lang: str, speaker=0):
     loguru.logger.debug("START TTS")
     result_filepath = f"{settings.OUTPUT_FOLDER}/{tts_id}/{model_name}.mp3"
     model = BarkModel.from_pretrained(f"{BASE_MODELS_DIR}/bark-small")
+    model.generation_config.num_channels = 2
     processor = BarkProcessor.from_pretrained(f"{BASE_MODELS_DIR}/bark-small")
     loguru.logger.debug(f"{BASE_MODELS_DIR}/bark-small 00000")
     inputs = processor(text, voice_preset=f"v2/{lang}_speaker_{speaker}")
