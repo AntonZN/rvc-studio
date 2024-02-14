@@ -71,11 +71,13 @@ class RVCModel(OrderedModel):
         ordering = ("order",)
 
     def __str__(self):
-        return self.ru
+        if self.ru:
+            return self.ru
+        else:
+            return self.id
 
 
 class RVCModelInfo(OrderedModel):
-    name = models.CharField("Названия для выбора в проекте", max_length=128)
     model = models.ForeignKey(
         RVCModel,
         on_delete=models.CASCADE,
@@ -103,4 +105,4 @@ class RVCModelInfo(OrderedModel):
         ordering = ("order",)
 
     def __str__(self):
-        return self.name
+        return f"{self.model} ({self.project})"
