@@ -87,7 +87,12 @@ async def handle(queue_name, amq_message: str):
     if queue_name != "tts":
         record = await Record.get(id=message_data["record_id"])
 
-        if record.status in [Status.PROCESSING, Status.ERROR, Status.DONE, Status.CANCELED]:
+        if record.status in [
+            Status.PROCESSING,
+            Status.ERROR,
+            Status.DONE,
+            Status.CANCELED,
+        ]:
             return record.status
 
         record.status = Status.PROCESSING
@@ -118,7 +123,12 @@ async def handle(queue_name, amq_message: str):
         loguru.logger.debug(f"TTS {message_data}")
         tts_obj = await TTS.get(id=message_data["tts_id"])
 
-        if tts_obj.status in [Status.PROCESSING, Status.ERROR, Status.DONE, Status.CANCELED]:
+        if tts_obj.status in [
+            Status.PROCESSING,
+            Status.ERROR,
+            Status.DONE,
+            Status.CANCELED,
+        ]:
             return tts_obj.status
 
         tts_obj.status = Status.PROCESSING
@@ -151,7 +161,8 @@ async def handle(queue_name, amq_message: str):
                 speaker,
                 model_name,
             )
-        except Exception:
+        except Exception as e:
+            loguru.logger.debug(e)
             tts_obj.status = Status.ERROR
 
         await tts_obj.save()
@@ -165,6 +176,7 @@ async def get_connection() -> AbstractRobustConnection:
         password=settings.RABBITMQ_PASSWORD,
         timeout=3600,
     )
+
 
 async def get_channel(connection_pool) -> aio_pika.Channel:
     await asyncio.sleep(10)

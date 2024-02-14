@@ -5,7 +5,7 @@ import loguru
 import numpy as np
 
 from lib import BASE_MODELS_DIR
-from lib.audio import save_input_audio, MAX_INT16
+from lib.audio import save_input_audio, MAX_INT16, save_input_audio_stereo
 
 import os
 from services.cloning import clone_vocal
@@ -62,6 +62,6 @@ def tts(tts_id, model_name, text: str, lang: str, speaker=0):
     sampling_rate = model.generation_config.sample_rate
     audio_data = audio2bytes(speech_output, sr=sampling_rate)
     output_audio = clone_vocal(bytes2audio(audio_data), model_name)
-    save_input_audio(result_filepath, output_audio)
+    save_input_audio_stereo(result_filepath, output_audio)
 
     return result_filepath
