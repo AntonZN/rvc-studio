@@ -130,20 +130,22 @@ def load_input_audio(audio_path, sr=None, **kwargs):
     return sound
 
 
-def save_input_audio_stereo(fname, input_audio, sr=None, to_int16=False):
+def save_input_audio_stereo(fname, input_audio, sr=None):
     loguru.logger.debug(f"INPUT_AUDIO {input_audio}")
+
+    if not sr:
+        sr = input_audio[1]
+
     os.makedirs(os.path.dirname(fname), exist_ok=True)
-    audio = np.array(
-        input_audio,
-        dtype="int16" if np.abs(input_audio[0]).max() > 100 else "float32",
-    )
-    if to_int16:
-        max_a = np.abs(audio).max() * 0.99
-        if max_a < 1:
-            audio = audio * max_a * MAX_INT16
-        audio = audio.astype("int16")
+
+    audio_data = np.array(input_audio[0])
+    audio_data = np.vstack([audio_data, audio_data])
+
+    audio_dtype = "int16" if np.abs(audio_data).max() > 100 else "float32"
+    audio = audio_data.astype(audio_dtype)
+
     try:
-        sf.write(fname, audio, sr if sr else input_audio[1])
+        sf.write(fname, audio, sr)
         return f"File saved to ${fname}"
     except Exception as e:
         return f"failed to save audio: {e}"
