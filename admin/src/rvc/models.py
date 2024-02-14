@@ -62,7 +62,7 @@ class RVCModel(OrderedModel):
         "Язык", choices=Lang.choices, null=True, blank=True, max_length=128
     )
     gender = models.CharField(
-        "Пол", choices=Lang.choices, null=True, blank=True, max_length=128
+        "Пол", choices=Gender.choices, null=True, blank=True, max_length=128
     )
 
     class Meta:
