@@ -31,6 +31,7 @@ class Record(Model):
 class RVCModel(Model):
     id = fields.IntField(pk=True)
     ru = fields.CharField(max_length=256, null=True)
+    file = fields.TextField()
     order = fields.IntField(null=True)
     speaker = fields.CharField(max_length=256, null=True)
     lang = fields.CharField(max_length=256, null=True)
