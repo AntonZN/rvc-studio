@@ -31,20 +31,10 @@ class Record(Model):
 class RVCModel(Model):
     id = fields.IntField(pk=True)
     ru = fields.CharField(max_length=256, null=True)
-    en = fields.CharField(max_length=256, null=True)
-    es = fields.CharField(max_length=256, null=True)
-    pt = fields.CharField(max_length=256, null=True)
-    fr = fields.CharField(max_length=256, null=True)
-    hi = fields.CharField(max_length=256, null=True)
-    ko = fields.CharField(max_length=256, null=True)
-    description = fields.TextField(null=True)
-    lock = fields.BooleanField(default=False)
-    hide = fields.BooleanField(default=False)
-    image = fields.TextField(null=True)
-    file = fields.TextField()
     order = fields.IntField(null=True)
     speaker = fields.CharField(max_length=256, null=True)
     lang = fields.CharField(max_length=256, null=True)
+    gender = fields.CharField(max_length=256, null=True)
 
     class Meta:
         table = "rvc_rvcmodel"
