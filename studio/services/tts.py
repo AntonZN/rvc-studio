@@ -60,8 +60,9 @@ def tts(tts_id, model_name, text: str, lang: str, speaker=0):
     ).astype(np.int16)
     loguru.logger.debug(f"{BASE_MODELS_DIR}/bark-small 11111")
     sampling_rate = model.generation_config.sample_rate
+    loguru.logger.debug(speech_output)
     audio_data = audio2bytes(speech_output, sr=sampling_rate)
     output_audio = clone_vocal(bytes2audio(audio_data), model_name)
-    save_input_audio_stereo(result_filepath, output_audio)
+    save_input_audio(result_filepath, output_audio)
 
     return result_filepath
