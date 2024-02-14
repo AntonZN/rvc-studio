@@ -1,4 +1,6 @@
 import os
+
+import loguru
 import numpy as np
 import librosa
 import soundfile as sf
@@ -131,17 +133,24 @@ def load_input_audio(audio_path, sr=None, **kwargs):
 def save_input_audio(fname, input_audio, sr=None, to_int16=False):
     print(f"saving sound to {fname}")
     os.makedirs(os.path.dirname(fname), exist_ok=True)
-    audio = np.array(
-        input_audio[0],
-        dtype="int16" if np.abs(input_audio[0]).max() > 100 else "float32",
-    )
+
+    audio_data = np.array(input_audio)
+    num_channels = audio_data.shape[0]  # Check number of channels
+    loguru.logger.debug(f"NUM CHANNEL {num_channels}")
+    if num_channels == 1:
+        audio_data = np.vstack([audio_data, audio_data])
+
+    audio_dtype = "int16" if np.abs(audio_data).max() > 100 else "float32"
+    audio = audio_data.astype(audio_dtype)
+
     if to_int16:
         max_a = np.abs(audio).max() * 0.99
         if max_a < 1:
             audio = audio * max_a * MAX_INT16
         audio = audio.astype("int16")
+
     try:
-        sf.write(fname, audio, sr if sr else input_audio[1])
+        sf.write(fname, audio, sr if sr else input_audio[1], format="wav")
         return f"File saved to ${fname}"
     except Exception as e:
         return f"failed to save audio: {e}"
