@@ -49,7 +49,7 @@ async def get_rvc_model_info_list(project_name):
         model = rvc_model_info.model
         result.append(
             {
-                "id": rvc_model_info.id,
+                "id": model.id,
                 "ru": rvc_model_info.ru,
                 "en": rvc_model_info.en,
                 "es": rvc_model_info.es,
