@@ -30,6 +30,7 @@ class RVCModelInfoSchema(BaseModel):
     lock: bool
     hide: bool
     image: Optional[str]
+    example: Optional[str]
     order: int
     speaker: Optional[str]
     lang: Optional[str]
