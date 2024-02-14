@@ -411,7 +411,7 @@ def vc_single(
             (audio, input_audio[1] if input_audio is not None else 16000),
             target_sr=16000,
             norm=True,
-            to_mono=True,
+            to_mono=False,
         )
 
         times = [0, 0, 0]
