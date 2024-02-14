@@ -138,14 +138,14 @@ def save_input_audio_stereo(fname, input_audio, sr=None):
 
     os.makedirs(os.path.dirname(fname), exist_ok=True)
 
-    audio_data = np.array(input_audio[0])
+    audio_data = np.array(
+        input_audio[0],
+        dtype="int16" if np.abs(input_audio[0]).max() > 100 else "float32",
+    )
     audio_data = np.vstack([audio_data, audio_data])
 
-    audio_dtype = "int16" if np.abs(audio_data).max() > 100 else "float32"
-    audio = audio_data.astype(audio_dtype)
-
     try:
-        sf.write(fname, audio, sr)
+        sf.write(fname, audio_data, sr)
         return f"File saved to ${fname}"
     except Exception as e:
         return f"failed to save audio: {e}"
