@@ -96,6 +96,9 @@ class RVCModelInfo(OrderedModel):
     ko = models.CharField("Название KO", null=True, blank=True, max_length=256)
     description = models.TextField("Описание", null=True, blank=True)
     image = models.FileField("Изображение", upload_to="icons", null=True, blank=True)
+    audio_example = models.FileField(
+        "Пример аудио", upload_to="audio_examples", null=True, blank=True
+    )
     lock = models.BooleanField(default=False)
     hide = models.BooleanField(default=False)
 
