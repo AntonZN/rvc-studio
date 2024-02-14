@@ -62,7 +62,7 @@ async def get_rvc_model_info_list(project_name):
                 "lock": rvc_model_info.lock,
                 "hide": rvc_model_info.hide,
                 "image": str(rvc_model_info.image) if rvc_model_info.image else None,
-                "example": f"{settings.MEDIA_URL}/{rvc_model_info.audio_example}"
+                "example": f"{settings.MEDIA_URL}/storage/{rvc_model_info.audio_example}"
                 if rvc_model_info.audio_example
                 else None,
                 "order": rvc_model_info.order,
