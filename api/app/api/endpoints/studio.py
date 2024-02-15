@@ -283,7 +283,7 @@ async def get_statistics():
         average_time_waiting = sum(time_waiting) / len(time_waiting)
         minutes = average_time_waiting // 60
         remaining_seconds = average_time_waiting % 60
-        average_time_waiting = f"{minutes} мин {remaining_seconds} сек"
+        average_time_waiting = f"{int(minutes)} мин {int(remaining_seconds)} сек"
     except ZeroDivisionError:
         average_time_waiting = 0
 
