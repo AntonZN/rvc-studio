@@ -3,14 +3,13 @@ import json
 from pathlib import Path
 
 import aio_pika
+import arrow
 import loguru
-from aio_pika import exceptions
 from aio_pika.abc import AbstractRobustConnection
-from aio_pika.pool import Pool
 from tortoise import Tortoise
 
 from cfg import get_settings
-from db_models import Status, RVCModel, Record, TTS
+from db_models import Status, RVCModel, Record, TTS, ProcessRequest
 
 from services.cover import create_cover
 from services.cloning import clone_only
@@ -118,6 +117,15 @@ async def handle(queue_name, amq_message: str):
             record.status = Status.ERROR
 
         await record.save()
+
+        waiting_time_in_seconds = int(
+            (arrow.utcnow().datetime - record.created_at).total_seconds()
+        )
+
+        await ProcessRequest.create(
+            process_type=queue_name, waiting_time_in_seconds=waiting_time_in_seconds
+        )
+
         return "done"
     else:
         loguru.logger.debug(f"TTS {message_data}")
@@ -166,6 +174,15 @@ async def handle(queue_name, amq_message: str):
             tts_obj.status = Status.ERROR
 
         await tts_obj.save()
+
+        waiting_time_in_seconds = int(
+            (arrow.utcnow().datetime - tts_obj.created_at).total_seconds()
+        )
+
+        await ProcessRequest.create(
+            process_type=queue_name, waiting_time_in_seconds=waiting_time_in_seconds
+        )
+
         return "done"
 
 

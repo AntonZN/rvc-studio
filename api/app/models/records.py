@@ -39,6 +39,15 @@ class TTS(Model):
         table = "studio_tts"
 
 
+class ProcessRequest(Model):
+    process_type = fields.CharField(max_length=256)
+    created_at = fields.DatetimeField(auto_now_add=True)
+    waiting_time_in_seconds = fields.IntField()
+
+    class Meta:
+        table = "studio_processrequest"
+
+
 TTSSchema = pydantic_model_creator(
     TTS,
     name="TTSSchema",

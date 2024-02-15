@@ -31,3 +31,9 @@ class TTS(models.Model):
     )
     voice_path = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class ProcessRequest(models.Model):
+    process_type = models.CharField(max_length=256)
+    created_at = models.DateTimeField(auto_now_add=True)
+    waiting_time_in_seconds = models.IntegerField()

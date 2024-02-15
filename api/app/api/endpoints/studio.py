@@ -20,6 +20,7 @@ from app.models.records import (
     Status,
     TTS,
     TTSSchema,
+    ProcessRequest,
 )
 from app.core.logic import publish_record
 
@@ -263,3 +264,31 @@ async def record_status(record_id: str, body: CoverBody):
     await publish_record("cover", publish_data)
 
     return record
+
+
+@router.get(
+    "/statistics/",
+    description="Статистика",
+)
+async def get_statistics():
+    all_use_count = await ProcessRequest.all().count()
+    tts_use_count = await ProcessRequest.filter(process_type="tts").count()
+    cover_use_count = await ProcessRequest.filter(process_type="cover").count()
+    clone_use_count = await ProcessRequest.filter(process_type="clone").count()
+    split_use_count = await ProcessRequest.filter(process_type="split").count()
+    times = await ProcessRequest.all().values_list("waiting_time_in_seconds", flat=True)
+    time_waiting = list(times)
+
+    try:
+        average_time_waiting = (sum(time_waiting) / len(time_waiting)) / 60
+    except ZeroDivisionError:
+        average_time_waiting = 0
+
+    return dict(
+        use_count=all_use_count,
+        tts_use_count=tts_use_count,
+        cover_use_count=cover_use_count,
+        clone_use_count=clone_use_count,
+        split_use_count=split_use_count,
+        average_time_waiting=average_time_waiting,
+    )
