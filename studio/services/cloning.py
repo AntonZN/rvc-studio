@@ -28,7 +28,6 @@ def clone_vocal(
 
         try:
             path = os.path.join(settings.RVC_MODELS_FOLDER, f"{name}.pth")
-            print(path)
             return get_vc(path, config)
         except Exception as e:
             raise RVCModelLoadError(e)
