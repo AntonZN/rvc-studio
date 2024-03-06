@@ -66,7 +66,7 @@ def split_for_cover(record_id, audio_path):
         instrumental = load_input_audio(instrumental_cache_path, 44100)
         return vocal, instrumental
 
-    vocal, instrumental = _split_audio(audio_path)
+    vocal, instrumental = _split_audio(audio_path, device="cuda")
 
     save_input_audio(vocal_cache_path, vocal)
     save_input_audio(instrumental_cache_path, instrumental)
@@ -76,7 +76,7 @@ def split_for_cover(record_id, audio_path):
 
 def split_only(record_id, audio_path):
     try:
-        vocal, instrumental = _split_audio(audio_path)
+        vocal, instrumental = _split_audio(audio_path, device="cuda")
         vocal_file_path = f"{settings.OUTPUT_FOLDER}/{record_id}/vocal.mp3"
         instrumental_file_path = (
             f"{settings.OUTPUT_FOLDER}/{record_id}/instrumental.mp3"

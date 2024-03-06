@@ -14,13 +14,13 @@ load_dotenv()
 
 class Config:
     def __init__(self):
-        self.device = "cpu"
-        self.instead = None
+        self.device = "cuda:0"
         self.is_half = True
         self.n_cpu = 0
         self.gpu_name = None
         self.gpu_mem = None
-        self.x_pad, self.x_query, self.x_center, self.x_max = self.device_config()
+        self.has_gpu = torch.cuda.is_available()
+        self.x_pad, self.x_query, self.x_center, self.x_max = self.device_config_gpu()
 
     @staticmethod
     def use_fp32_config():
@@ -50,6 +50,64 @@ class Config:
             return True
         except Exception:
             return False
+
+    def device_config_gpu(self) -> tuple:
+        if torch.cuda.is_available():
+            i_device = int(self.device.split(":")[-1])
+            self.gpu_name = torch.cuda.get_device_name(i_device)
+            if (
+                ("16" in self.gpu_name and "V100" not in self.gpu_name.upper())
+                or "P40" in self.gpu_name.upper()
+                or "1060" in self.gpu_name
+                or "1070" in self.gpu_name
+                or "1080" in self.gpu_name
+            ):
+                print("Found GPU", self.gpu_name, ", force to fp32")
+                self.is_half = False
+                self.use_fp32_config()
+            else:
+                print("Found GPU", self.gpu_name)
+            self.gpu_mem = int(
+                torch.cuda.get_device_properties(i_device).total_memory
+                / 1024
+                / 1024
+                / 1024
+                # + 0.4
+            )
+        elif self.has_mps():
+            print("No supported Nvidia GPU found")
+            self.device = self.instead = "mps"
+            self.is_half = False
+            self.use_fp32_config()
+        else:
+            print("No supported Nvidia GPU found")
+            self.device = self.instead = "cpu"
+            self.is_half = False
+            self.use_fp32_config()
+
+        if self.n_cpu == 0:
+            self.n_cpu = cpu_count()
+
+        if self.is_half:
+            # 6G显存配置
+            x_pad = 3
+            x_query = 10
+            x_center = 60
+            x_max = 64
+        else:
+            # 5G显存配置
+            x_pad = 1
+            x_query = 6
+            x_center = 38
+            x_max = 41
+
+        if self.gpu_mem is not None and self.gpu_mem <= 4:
+            x_pad = 1
+            x_query = 5
+            x_center = 30
+            x_max = 32
+
+        return x_pad, x_query, x_center, x_max
 
     def device_config(self) -> tuple:
         self.device = self.instead = "cpu"

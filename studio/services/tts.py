@@ -3,11 +3,11 @@ import zlib
 
 import loguru
 import numpy as np
+import torch
 
 from lib import BASE_MODELS_DIR
-from lib.audio import save_input_audio, MAX_INT16, save_input_audio_stereo
+from lib.audio import save_input_audio, MAX_INT16
 
-import os
 from services.cloning import clone_vocal
 from transformers import BarkModel, BarkProcessor
 from cfg import get_settings
@@ -48,19 +48,17 @@ def bytes2audio(data: str):
 
 
 def tts(tts_id, model_name, text: str, lang: str, speaker=0):
+    device = "cuda:0" if torch.cuda.is_available() else "cpu"
     loguru.logger.debug("START TTS")
     result_filepath = f"{settings.OUTPUT_FOLDER}/{tts_id}/{model_name}.mp3"
     model = BarkModel.from_pretrained(f"{BASE_MODELS_DIR}/bark-small")
-    model.generation_config.num_channels = 2
+    model = model.to(device)
     processor = BarkProcessor.from_pretrained(f"{BASE_MODELS_DIR}/bark-small")
-    loguru.logger.debug(f"{BASE_MODELS_DIR}/bark-small 00000")
-    inputs = processor(text, voice_preset=f"v2/{lang}_speaker_{speaker}")
+    inputs = processor(text, voice_preset=f"v2/{lang}_speaker_{speaker}").to(device)
     speech_output = (
         model.generate(**inputs).cpu().numpy().squeeze() * MAX_INT16
     ).astype(np.int16)
-    loguru.logger.debug(f"{BASE_MODELS_DIR}/bark-small 11111")
     sampling_rate = model.generation_config.sample_rate
-    loguru.logger.debug(speech_output)
     audio_data = audio2bytes(speech_output, sr=sampling_rate)
     output_audio = clone_vocal(bytes2audio(audio_data), model_name)
     save_input_audio(result_filepath, output_audio)

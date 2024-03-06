@@ -29,6 +29,7 @@ class MDXParams:
         self.trim = self.n_fft // 2
         self.chunk_size = hop * (self.dim_t - 1)
         self.device = device
+        print(device)
         self.window = torch.hann_window(
             window_length=self.n_fft, periodic=True, device=self.device
         )
