@@ -3,6 +3,9 @@ import multiprocessing
 
 from consumer import consume
 from cfg import get_settings
+import torch
+
+torch.multiprocessing.set_start_method("spawn")
 
 settings = get_settings()
 
