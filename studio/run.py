@@ -5,7 +5,6 @@ from consumer import consume
 from cfg import get_settings
 import torch
 
-torch.multiprocessing.set_start_method("spawn")
 
 settings = get_settings()
 
@@ -18,6 +17,8 @@ def run_async_task(queue_name, worker):
 
 
 if __name__ == "__main__":
+    torch.multiprocessing.set_start_method("spawn")
+
     clone_process = 2
     splitter_process = 2
     cover_process = 1
