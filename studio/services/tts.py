@@ -49,7 +49,7 @@ def bytes2audio(data: str):
 
 def tts(tts_id, model_name, text: str, lang: str, speaker=0):
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
-    loguru.logger.debug("START TTS")
+    loguru.logger.debug(f"START TTS {torch.cuda.is_available()}")
     result_filepath = f"{settings.OUTPUT_FOLDER}/{tts_id}/{model_name}.mp3"
     model = BarkModel.from_pretrained(f"{BASE_MODELS_DIR}/bark-small")
     model = model.to(device)
