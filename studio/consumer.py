@@ -15,6 +15,9 @@ from services.cover import create_cover
 from services.cloning import clone_only
 from services.splitter import split_only
 from services.tts import tts as create_tts
+import torch
+
+torch.multiprocessing.set_start_method("spawn")
 
 settings = get_settings()
 
