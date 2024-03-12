@@ -4,20 +4,56 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('rvc', '0003_remove_rvcmodel_name_rvcmodel_description_and_more'),
+        ("rvc", "0003_remove_rvcmodel_name_rvcmodel_description_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='rvcmodel',
-            name='lang',
-            field=models.CharField(blank=True, choices=[('ru', 'Ru'), ('de', 'De'), ('en', 'En'), ('es', 'Es'), ('fr', 'Fr'), ('hi', 'Hi'), ('it', 'It'), ('ja', 'Ja'), ('ko', 'Ko'), ('pl', 'Pl'), ('pt', 'Pt'), ('tr', 'Tr'), ('zh', 'Zh')], null=True, verbose_name='Язык'),
+            model_name="rvcmodel",
+            name="lang",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("ru", "Ru"),
+                    ("de", "De"),
+                    ("en", "En"),
+                    ("es", "Es"),
+                    ("fr", "Fr"),
+                    ("hi", "Hi"),
+                    ("it", "It"),
+                    ("ja", "Ja"),
+                    ("ko", "Ko"),
+                    ("pl", "Pl"),
+                    ("pt", "Pt"),
+                    ("tr", "Tr"),
+                    ("zh", "Zh"),
+                ],
+                max_length=128,
+                null=True,
+                verbose_name="Язык",
+            ),
         ),
         migrations.AddField(
-            model_name='rvcmodel',
-            name='speaker',
-            field=models.CharField(blank=True, choices=[('0', 'Null'), ('1', 'One'), ('2', 'Two'), ('3', 'Fre'), ('4', 'Four'), ('5', 'Five'), ('6', 'Six'), ('7', 'Seven'), ('8', 'Eight'), ('9', 'Nine')], null=True, verbose_name='Спикер'),
+            model_name="rvcmodel",
+            name="speaker",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("0", "Null"),
+                    ("1", "One"),
+                    ("2", "Two"),
+                    ("3", "Fre"),
+                    ("4", "Four"),
+                    ("5", "Five"),
+                    ("6", "Six"),
+                    ("7", "Seven"),
+                    ("8", "Eight"),
+                    ("9", "Nine"),
+                ],
+                max_length=128,
+                null=True,
+                verbose_name="Спикер",
+            ),
         ),
     ]
