@@ -16,6 +16,11 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
 RUN pip install --upgrade pip
 
+RUN apt-get install -y software-properties-common && \
+    add-apt-repository -y ppa:deadsnakes/ppa && \
+    apt-get update && \
+    apt install -y python3.10 \
+
 COPY . /app
 
 CMD ["python", "run.py"]
