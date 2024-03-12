@@ -66,6 +66,8 @@ services:
     depends_on:
       - db
       - rabbitmq
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
     env_file:
       - .env
 
