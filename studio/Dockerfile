@@ -16,8 +16,7 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
 RUN pip install --upgrade pip
 
-RUN apt-get install -y software-properties-common && \
-    add-apt-repository -y ppa:deadsnakes/ppa && \
+RUN add-apt-repository -y ppa:deadsnakes/ppa && \
     apt-get update && \
     apt-get install -y python3.10
 
