@@ -1,6 +1,8 @@
-FROM python:3.10
+FROM nvidia/cuda:12.3.2-runtime-ubuntu22.04
 
-RUN apt-get update && apt-get install -y ffmpeg libsndfile1 wget tar espeak
+RUN apt-get update && \
+    apt-get install -y python3-pip python3-dev ffmpeg libsndfile1 wget tar espeak && \
+    rm -rf /var/lib/apt/lists/*
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
