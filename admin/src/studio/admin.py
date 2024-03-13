@@ -13,4 +13,5 @@ class StatisticsAdmin(admin.ModelAdmin):
         "count_split",
         "count_split_old",
         "count_clone",
+        "average_waiting",
     )
