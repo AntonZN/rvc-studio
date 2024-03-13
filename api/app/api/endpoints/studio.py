@@ -12,6 +12,7 @@ from fastapi import (
     Form,
 )
 from pydantic import BaseModel
+from tortoise import Tortoise
 
 from app.core.config import get_settings
 
@@ -91,7 +92,18 @@ def save_file(file):
 async def create_statistics(process):
     try:
         date = datetime.date.today()
-        stat, _ = await Statistics.get_or_create(date=date)
+        try:
+            stat = await Statistics.get(date=date)
+        except:
+            stat = await Statistics.create(
+                date=date,
+                count_tts=0,
+                count_split=0,
+                count_split_old=0,
+                count_cover=0,
+                count_clone=0,
+            )
+
         if process == "tts":
             stat.count_tts += 1
         elif process == "split":
@@ -102,6 +114,7 @@ async def create_statistics(process):
             stat.count_cover += 1
         elif process == "clone":
             stat.count_clone += 1
+
         await stat.save()
     except Exception as e:
         loguru.logger.error(e)
