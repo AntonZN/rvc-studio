@@ -37,3 +37,16 @@ class ProcessRequest(models.Model):
     process_type = models.CharField(max_length=256)
     created_at = models.DateTimeField(auto_now_add=True)
     waiting_time_in_seconds = models.IntegerField()
+
+
+class Statistics(models.Model):
+    date = models.DateField()
+    count_cover = models.IntegerField()
+    count_tts = models.IntegerField()
+    count_split = models.IntegerField()
+    count_split_old = models.IntegerField()
+    count_clone = models.IntegerField()
+
+    class Meta:
+        verbose_name = "Статистика"
+        verbose_name_plural = "Статистика"

@@ -48,6 +48,15 @@ class ProcessRequest(Model):
         table = "studio_processrequest"
 
 
+class Statistics(Model):
+    date = fields.DateField()
+    count_cover = fields.IntField()
+    count_tts = fields.IntField()
+    count_split = fields.IntField()
+    count_split_old = fields.IntField()
+    count_clone = fields.IntField()
+
+
 TTSSchema = pydantic_model_creator(
     TTS,
     name="TTSSchema",

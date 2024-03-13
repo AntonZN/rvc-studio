@@ -1,8 +1,10 @@
+import datetime
 import os
 from enum import IntEnum, Enum
 from typing import Annotated, Optional
 from uuid import uuid4
 
+import loguru
 from fastapi import (
     APIRouter,
     UploadFile,
@@ -21,6 +23,7 @@ from app.models.records import (
     TTS,
     TTSSchema,
     ProcessRequest,
+    Statistics,
 )
 from app.core.logic import publish_record
 
@@ -85,6 +88,25 @@ def save_file(file):
     return record_path
 
 
+async def create_statistics(process):
+    try:
+        date = str(datetime.datetime.date)
+        stat, _ = await Statistics.get_or_create(date=date)
+        if process == "tts":
+            stat.count_tts += 1
+        elif process == "split":
+            stat.count_split += 1
+        elif process == "old_split":
+            stat.count_split_old += 1
+        elif process == "cover":
+            stat.count_cover += 1
+        elif process == "clone":
+            stat.count_clone += 1
+        await stat.save()
+    except Exception as e:
+        loguru.logger.error(e)
+
+
 @router.post(
     "/split/",
     response_model=RecordSchema,
@@ -104,6 +126,7 @@ async def split_record(
     }
 
     await publish_record("split", publish_data)
+    await create_statistics("split")
 
     return record
 
@@ -134,7 +157,7 @@ async def clone_voice(
     }
 
     await publish_record("clone", publish_data)
-
+    await create_statistics("clone")
     return record
 
 
@@ -164,7 +187,7 @@ async def cover(
     }
 
     await publish_record("cover", publish_data)
-
+    await create_statistics("cover")
     return record
 
 
@@ -187,7 +210,7 @@ async def create_tts(body: TTSBody):
     }
 
     await publish_record("tts", publish_data)
-
+    await create_statistics("tts")
     return tts
 
 
@@ -295,3 +318,10 @@ async def get_statistics():
         split_use_count=split_use_count,
         average_time_waiting=average_time_waiting,
     )
+
+
+@router.post(
+    "/statistics/old_split/",
+)
+async def old_split():
+    await create_statistics("old_split")
