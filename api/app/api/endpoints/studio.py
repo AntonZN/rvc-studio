@@ -90,7 +90,7 @@ def save_file(file):
 
 async def create_statistics(process):
     try:
-        date = datetime.datetime.date
+        date = datetime.date.today()
         stat, _ = await Statistics.get_or_create(date=date)
         if process == "tts":
             stat.count_tts += 1
