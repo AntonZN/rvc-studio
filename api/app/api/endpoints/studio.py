@@ -115,6 +115,20 @@ async def create_statistics(process):
         elif process == "clone":
             stat.count_clone += 1
 
+        times = await ProcessRequest.filter(created_at__date=date).values_list(
+            "waiting_time_in_seconds", flat=True
+        )
+        time_waiting = list(times)
+
+        try:
+            average_time_waiting = sum(time_waiting) / len(time_waiting)
+            minutes = average_time_waiting // 60
+            remaining_seconds = average_time_waiting % 60
+            average_time_waiting = f"{int(minutes)} мин {int(remaining_seconds)} сек"
+        except ZeroDivisionError:
+            average_time_waiting = 0
+        stat.average_waiting = average_time_waiting
+
         await stat.save()
     except Exception as e:
         loguru.logger.error(e)
