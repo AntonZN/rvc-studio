@@ -56,6 +56,9 @@ class Statistics(Model):
     count_split_old = fields.IntField()
     count_clone = fields.IntField()
 
+    class Meta:
+        table = "studio_statistics"
+
 
 TTSSchema = pydantic_model_creator(
     TTS,
