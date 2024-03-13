@@ -115,9 +115,13 @@ async def create_statistics(process):
         elif process == "clone":
             stat.count_clone += 1
 
-        times = await ProcessRequest.filter(created_at__date=date).values_list(
-            "waiting_time_in_seconds", flat=True
-        )
+        start_of_day = datetime.datetime.combine(date, datetime.time.min)
+        end_of_day = datetime.datetime.combine(date, datetime.time.max)
+
+        times = await ProcessRequest.filter(
+            created_at__gte=start_of_day, created_at__lte=end_of_day
+        ).values_list("waiting_time_in_seconds", flat=True)
+
         time_waiting = list(times)
 
         try:
