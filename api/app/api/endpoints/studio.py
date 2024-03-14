@@ -102,6 +102,7 @@ async def create_statistics(process):
                 count_split_old=0,
                 count_cover=0,
                 count_clone=0,
+                average_waiting="неизвестно",
             )
 
         if process == "tts":
