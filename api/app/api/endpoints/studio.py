@@ -124,12 +124,12 @@ async def create_statistics(process):
 
         time_waiting = list(times)
 
-        try:
+        if time_waiting:  # Check if the list is not empty
             average_time_waiting = sum(time_waiting) / len(time_waiting)
             minutes = average_time_waiting // 60
             remaining_seconds = average_time_waiting % 60
             average_time_waiting = f"{int(minutes)} min {int(remaining_seconds)} sec"
-        except ZeroDivisionError:
+        else:
             average_time_waiting = "0"
 
         stat.average_waiting = average_time_waiting
