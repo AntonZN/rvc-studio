@@ -130,7 +130,8 @@ async def create_statistics(process):
             remaining_seconds = average_time_waiting % 60
             average_time_waiting = f"{int(minutes)} min {int(remaining_seconds)} sec"
         except ZeroDivisionError:
-            average_time_waiting = 0
+            average_time_waiting = "0"
+
         stat.average_waiting = average_time_waiting
 
         await stat.save()
