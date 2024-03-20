@@ -358,3 +358,12 @@ async def get_statistics():
 )
 async def old_split():
     await create_statistics("old_split")
+
+
+@router.post(
+    "/statistics/old_split/avg/",
+)
+async def old_split(seconds: int):
+    await ProcessRequest.create(
+        process_type="old_split", waiting_time_in_seconds=seconds
+    )
