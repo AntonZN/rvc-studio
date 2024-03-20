@@ -102,7 +102,7 @@ async def handle(queue_name, amq_message: str):
             try:
                 model = await RVCModel.get(id=message_data["model_id"])
             except Exception as e:
-                loguru.logger.debug(e)
+                loguru.logger.debug(f"{e}, {message_data}")
                 record.status = Status.ERROR
                 await record.save()
                 return "done"
