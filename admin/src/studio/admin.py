@@ -9,7 +9,7 @@ admin.site.register(Record)
 @admin.register(Statistics)
 class StatisticsAdmin(admin.ModelAdmin):
     def average_waiting_old_split(self, obj):
-        date = datetime.date.today()
+        date = obj.date
         start_of_day = datetime.datetime.combine(date, datetime.time.min)
         end_of_day = datetime.datetime.combine(date, datetime.time.max)
         times = ProcessRequest.objects.filter(
