@@ -332,7 +332,11 @@ async def get_statistics():
     cover_use_count = await ProcessRequest.filter(process_type="cover").count()
     clone_use_count = await ProcessRequest.filter(process_type="clone").count()
     split_use_count = await ProcessRequest.filter(process_type="split").count()
-    times = await ProcessRequest.all().values_list("waiting_time_in_seconds", flat=True)
+    times = (
+        await ProcessRequest.all()
+        .exclude(process_type="old_split")
+        .values_list("waiting_time_in_seconds", flat=True)
+    )
     time_waiting = list(times)
 
     try:
