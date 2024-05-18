@@ -57,6 +57,18 @@ services:
     env_file:
       - .env
 
+  chord:
+    build:
+      context: ./chord
+      dockerfile: Dockerfile
+    volumes:
+      - storage:/storage
+    depends_on:
+      - db
+      - rabbitmq
+    env_file:
+      - .env
+
   studio:
     build:
       context: ./studio
