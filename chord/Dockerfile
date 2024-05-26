@@ -1,7 +1,5 @@
 FROM python:3.8
 
-RUN apt-get install -y ffmpeg
-
 WORKDIR /app
 
 COPY requirements.txt /tmp/requirements.txt
