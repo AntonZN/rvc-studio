@@ -77,6 +77,20 @@ class RVCModel(OrderedModel):
             return self.id
 
 
+class Category:
+    name = models.CharField(
+        "Название Категории",
+        max_length=256,
+    )
+
+    class Meta:
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
+
+    def __str__(self):
+        return self.name
+
+
 class RVCModelInfo(OrderedModel):
     model = models.ForeignKey(
         RVCModel,
@@ -86,6 +100,11 @@ class RVCModelInfo(OrderedModel):
     )
     project = models.ForeignKey(
         Project, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Проект"
+    )
+    categories = models.ManyToManyField(
+        Category,
+        verbose_name="Категории",
+        related_name="models",
     )
     ru = models.CharField("Название RU", max_length=256)
     en = models.CharField("Название EN", null=True, blank=True, max_length=256)
@@ -101,6 +120,8 @@ class RVCModelInfo(OrderedModel):
     )
     lock = models.BooleanField(default=False)
     hide = models.BooleanField(default=False)
+    created_at = models.DateTimeField("Дата создания", auto_now_add=True)
+    usages = models.BigIntegerField(default=0)
 
     class Meta:
         verbose_name = "Описание модели"

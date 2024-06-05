@@ -1,3 +1,4 @@
+import arrow
 from typing import List, Optional
 
 from fastapi import (
@@ -11,7 +12,13 @@ from app.api import responses
 
 from app.core.config import get_settings
 
-from app.models.rvc import RVCModelSchema, RVCModel, RVCModelInfo
+from app.models.rvc import (
+    RVCModelSchema,
+    RVCModel,
+    RVCModelInfo,
+    CategorySchema,
+    Category,
+)
 
 settings = get_settings()
 router = APIRouter()
@@ -41,13 +48,14 @@ async def get_rvc_model_info_list(project_name):
     rvc_model_infos = (
         await RVCModelInfo.filter(project__name=project_name)
         .order_by("order")
-        .prefetch_related("model")
+        .prefetch_related("model", "categories")
     )
 
     result = []
 
     for rvc_model_info in rvc_model_infos:
         model = rvc_model_info.model
+
         result.append(
             {
                 "id": model.id,
@@ -69,6 +77,10 @@ async def get_rvc_model_info_list(project_name):
                 "speaker": model.speaker,
                 "lang": model.lang,
                 "gender": model.gender,
+                "categories": [
+                    {"id": category.id + 1, "name": category.name}
+                    for category in rvc_model_info.categories
+                ],
             }
         )
 
@@ -85,6 +97,18 @@ async def get_rvc_model_info_list(project_name):
 )
 async def get_rvc_list():
     return await RVCModelSchema.from_queryset(RVCModel.all())
+
+
+@router.get(
+    "/categories/",
+    response_model=List[CategorySchema],
+    description="Список Категорий",
+    responses={
+        status.HTTP_404_NOT_FOUND: responses.HTTP_404_NOT_FOUND,
+    },
+)
+async def get_categories_list():
+    return await CategorySchema.from_queryset(Category.all())
 
 
 @router.get(

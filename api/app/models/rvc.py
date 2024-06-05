@@ -11,6 +11,14 @@ class Project(Model):
         table = "rvc_project"
 
 
+class Category(Model):
+    id = fields.IntField(pk=True)
+    name = fields.CharField(max_length=256, null=True)
+
+    class Meta:
+        table = "rvc_category"
+
+
 class RVCModel(Model):
     id = fields.IntField(pk=True)
     ru = fields.CharField(max_length=256, null=True)
@@ -28,6 +36,7 @@ class RVCModelInfo(Model):
     id = fields.IntField(pk=True)
     model = fields.ForeignKeyField("models.RVCModel", related_name="model_info")
     project = fields.ForeignKeyField("models.Project", related_name="models")
+    categories = fields.ManyToManyField("models.Category", related_name="models")
     ru = fields.CharField(max_length=256, null=True)
     en = fields.CharField(max_length=256, null=True)
     es = fields.CharField(max_length=256, null=True)
@@ -41,6 +50,8 @@ class RVCModelInfo(Model):
     image = fields.TextField(null=True)
     audio_example = fields.TextField(null=True)
     order = fields.IntField(null=True)
+    created_at = fields.DatetimeField(auto_now_add=True)
+    usages = fields.IntField(default=0)
 
     class Meta:
         ordering = ["order"]
@@ -48,3 +59,4 @@ class RVCModelInfo(Model):
 
 
 RVCModelSchema = pydantic_model_creator(RVCModel, name="RVCModelSchema")
+CategorySchema = pydantic_model_creator(Category, name="CategorySchema")
