@@ -131,3 +131,9 @@ class RVCModelInfo(OrderedModel):
 
     def __str__(self):
         return f"{self.model} ({self.project})"
+
+
+class ModelProjectUsage(models.Model):
+    model_id = models.BigIntegerField()
+    project_id = models.BigIntegerField()
+    usages = models.BigIntegerField()

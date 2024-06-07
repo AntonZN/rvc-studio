@@ -75,5 +75,14 @@ class RVCModelInfoCategory(Model):
         table = "rvc_rvcmodelinfo_categories"
 
 
+class ModelProjectUsage(Model):
+    model_id = fields.BigIntField()
+    project_id = fields.BigIntField()
+    usages = fields.BigIntField()
+
+    class Meta:
+        table = "rvc_modelprojectusage"
+
+
 RVCModelSchema = pydantic_model_creator(RVCModel, name="RVCModelSchema")
 CategorySchema = pydantic_model_creator(Category, name="CategorySchema")

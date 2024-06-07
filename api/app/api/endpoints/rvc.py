@@ -20,6 +20,7 @@ from app.models.rvc import (
     RVCModelInfo,
     CategorySchema,
     Category,
+    ModelProjectUsage,
 )
 
 settings = get_settings()
@@ -61,6 +62,18 @@ async def get_rvc_model_info_list(project_name):
     for rvc_model_info in rvc_model_infos:
         model = rvc_model_info.model
 
+        try:
+            print(rvc_model_info.project_id)
+            print(model.id)
+            print(await ModelProjectUsage.all().values("project_id", "model_id"))
+            usages_obj = await ModelProjectUsage.get(
+                project_id=rvc_model_info.project_id, model_id=model.id
+            )
+            usages = usages_obj.usages
+        except Exception as e:
+            print(e)
+            usages = 0
+
         result.append(
             {
                 "id": model.id,
@@ -83,7 +96,7 @@ async def get_rvc_model_info_list(project_name):
                 "lang": model.lang,
                 "gender": model.gender,
                 "created_at": rvc_model_info.created_at,
-                "usages": rvc_model_info.usages,
+                "usages": usages,
                 "categories": [
                     {"id": category.id, "name": category.name}
                     for category in rvc_model_info.categories

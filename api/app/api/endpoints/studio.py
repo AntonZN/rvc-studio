@@ -12,7 +12,7 @@ from fastapi import (
     Form,
 )
 from pydantic import BaseModel
-from tortoise import Tortoise
+from tortoise.expressions import F
 
 from app.core.config import get_settings
 
@@ -27,6 +27,7 @@ from app.models.records import (
     Statistics,
 )
 from app.core.logic import publish_record
+from app.models.rvc import ModelProjectUsage
 
 settings = get_settings()
 router = APIRouter()
@@ -192,7 +193,6 @@ async def clone_voice(
         "model_id": model_id,
         "type": clone_type,
     }
-
     await publish_record("clone", publish_data)
     await create_statistics("clone")
     return record
@@ -222,6 +222,12 @@ async def cover(
         "model_id": model_id,
         "type": clone_type,
     }
+    if await ModelProjectUsage.filter(project_id=3, model_id=model_id).exists():
+        await ModelProjectUsage.filter(project_id=3, model_id=model_id).update(
+            usages=F("usages") + 1
+        )
+    else:
+        await ModelProjectUsage.create(project_id=3, model_id=model_id, usages=1)
 
     await publish_record("cover", publish_data)
     await create_statistics("cover")
@@ -245,7 +251,12 @@ async def create_tts(body: TTSBody):
         "lang": body.lang.value,
         "speaker": body.speaker.value,
     }
-
+    if await ModelProjectUsage.filter(project_id=1, model_id=body.model_id).exists():
+        await ModelProjectUsage.filter(project_id=1, model_id=body.model_id).update(
+            usages=F("usages") + 1
+        )
+    else:
+        await ModelProjectUsage.create(project_id=1, model_id=body.model_id, usages=1)
     await publish_record("tts", publish_data)
     await create_statistics("tts")
     return tts
