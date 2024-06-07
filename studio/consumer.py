@@ -11,7 +11,7 @@ from tortoise import Tortoise
 from cfg import get_settings
 from db_models import Status, RVCModel, Record, TTS, ProcessRequest
 
-from services.cover import create_cover
+from services.cover import create_cover, create_cover_v2
 from services.cloning import clone_only
 from services.splitter import split_only
 from services.tts import tts as create_tts
@@ -40,7 +40,7 @@ def process_tts(tts_obj, text, lang, speaker, model_name):
 
 def process(queue_name, record, model_name, clone_type):
     if queue_name == "cover":
-        result = create_cover(
+        result, cloned, instrumental = create_cover_v2(
             record.id,
             record.file_path,
             model_name,
@@ -49,6 +49,8 @@ def process(queue_name, record, model_name, clone_type):
         if result:
             record.status = Status.DONE
             record.cover_path = result
+            record.instrumental_path = instrumental
+            record.vocal_path = cloned
             loguru.logger.debug(result)
         else:
             record.status = Status.ERROR

@@ -74,6 +74,19 @@ def split_for_cover(record_id, audio_path):
     return vocal, instrumental
 
 
+def split_for_cover_v2(record_id, audio_path):
+    try:
+        vocal, instrumental = _split_audio(audio_path, device="cuda")
+        instrumental_file_path = (
+            f"{settings.OUTPUT_FOLDER}/{record_id}/instrumental.mp3"
+        )
+
+        save_input_audio(instrumental_file_path, instrumental)
+        return vocal, instrumental, instrumental_file_path
+    except Exception as e:
+        loguru.logger.error(e)
+
+
 def split_only(record_id, audio_path):
     try:
         vocal, instrumental = _split_audio(audio_path, device="cuda")
