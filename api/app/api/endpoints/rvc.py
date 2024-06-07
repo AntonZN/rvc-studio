@@ -1,5 +1,7 @@
+from datetime import datetime
+
 import arrow
-from typing import List, Optional
+from typing import List, Optional, Any
 
 from fastapi import (
     APIRouter,
@@ -42,6 +44,9 @@ class RVCModelInfoSchema(BaseModel):
     speaker: Optional[str]
     lang: Optional[str]
     gender: Optional[str]
+    usages: Optional[int]
+    created_at: datetime
+    categories: List[Any]
 
 
 async def get_rvc_model_info_list(project_name):
@@ -77,13 +82,15 @@ async def get_rvc_model_info_list(project_name):
                 "speaker": model.speaker,
                 "lang": model.lang,
                 "gender": model.gender,
+                "created_at": rvc_model_info.created_at,
+                "usages": rvc_model_info.usages,
                 "categories": [
-                    {"id": category.id + 1, "name": category.name}
+                    {"id": category.id, "name": category.name}
                     for category in rvc_model_info.categories
                 ],
             }
         )
-
+    print(result)
     return result
 
 
@@ -108,7 +115,7 @@ async def get_rvc_list():
     },
 )
 async def get_categories_list():
-    return await CategorySchema.from_queryset(Category.all())
+    return await CategorySchema.from_queryset(Category.all().order_by("order"))
 
 
 @router.get(

@@ -74,10 +74,10 @@ class RVCModel(OrderedModel):
         if self.ru:
             return self.ru
         else:
-            return self.id
+            return str(self.id)
 
 
-class Category:
+class Category(OrderedModel):
     name = models.CharField(
         "Название Категории",
         max_length=256,
@@ -86,6 +86,8 @@ class Category:
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
+
+        ordering = ("order",)
 
     def __str__(self):
         return self.name
@@ -104,7 +106,6 @@ class RVCModelInfo(OrderedModel):
     categories = models.ManyToManyField(
         Category,
         verbose_name="Категории",
-        related_name="models",
     )
     ru = models.CharField("Название RU", max_length=256)
     en = models.CharField("Название EN", null=True, blank=True, max_length=256)
