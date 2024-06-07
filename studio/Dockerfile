@@ -9,7 +9,7 @@ RUN apt-get update --yes --quiet && DEBIAN_FRONTEND=noninteractive apt-get insta
     software-properties-common \
     build-essential apt-utils \
     wget curl vim git ca-certificates kmod \
-    nvidia-driver-535 \
+    nvidia-driver-535 ffmpeg \
  && rm -rf /var/lib/apt/lists/*
 
 # PYTHON 3.10
@@ -34,8 +34,6 @@ WORKDIR /app
 COPY requirements.txt /tmp/requirements.txt
 
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
-
-RUN apt-get install -y ffmpeg
 
 COPY . /app
 
