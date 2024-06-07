@@ -90,7 +90,6 @@ async def get_rvc_model_info_list(project_name):
                 ],
             }
         )
-    print(result)
     return result
 
 
