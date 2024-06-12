@@ -65,7 +65,6 @@ nvidia-nvjitlink-cu12==12.3.101
 nvidia-nvtx-cu12==12.1.105
 omegaconf==2.0.6
 onnxruntime==1.15.0
-onnxruntime-gpu==1.18.0
 packaging==23.2
 pexpect==4.9.0
 pkginfo==1.9.6
@@ -126,3 +125,4 @@ loguru
 python-dotenv~=1.0.0
 tortoise-orm[asyncpg]==0.19.3
 pydantic==1.10.12
+onnxruntime-gpu==1.18.0
