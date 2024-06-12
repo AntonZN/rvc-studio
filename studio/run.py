@@ -19,10 +19,10 @@ def run_async_task(queue_name, worker):
 if __name__ == "__main__":
     torch.multiprocessing.set_start_method("spawn")
 
-    clone_process = 2
-    splitter_process = 2
+    clone_process = 1
+    splitter_process = 1
     cover_process = 1
-    tts_process = 2
+    tts_process = 1
 
     processes = cover_process + splitter_process + clone_process + tts_process
 

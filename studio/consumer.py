@@ -1,10 +1,13 @@
 import asyncio
+import gc
 import json
 from pathlib import Path
 
 import aio_pika
 import arrow
 import loguru
+import torch
+
 from aio_pika.abc import AbstractRobustConnection
 from tortoise import Tortoise
 
@@ -231,6 +234,8 @@ async def consume(queue_name: str, worker) -> None:
                         loguru.logger.debug(f"Worker[{worker}][{queue_name}] DONE)")
                         await message.ack()
                         loguru.logger.debug(f"Worker[{worker}][{queue_name}] ASK)")
+                    torch.cuda.empty_cache()
+                    gc.collect()
         except Exception as e:
             loguru.logger.error(e)
             await asyncio.sleep(5)
