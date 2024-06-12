@@ -34,6 +34,7 @@ WORKDIR /app
 COPY requirements.txt /tmp/requirements.txt
 
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
+RUN pip install onnxruntime-gpu==1.18.0
 
 COPY . /app
 
