@@ -13,13 +13,16 @@ from lib import BASE_MODELS_DIR
 from cfg import get_settings
 
 settings = get_settings()
-warnings.filterwarnings("ignore")
+
+from onnxruntime.capi import _pybind_state as C
 
 
 def _split_audio(
     audio_path,
     device="cpu",
 ):
+    print(C.get_available_providers())
+
     num_threads = max(get_optimal_threads(-1), 1)
 
     model = MDXNet(
