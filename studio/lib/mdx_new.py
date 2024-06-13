@@ -186,4 +186,4 @@ class Predictor:
         sources = self.demix(mix.T)
         opt = sources[0].T
 
-        return mix - opt, opt, rate
+        return (mix - opt, opt, rate)
