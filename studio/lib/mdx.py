@@ -4,6 +4,7 @@ import warnings
 import numpy as np
 import torch
 import onnxruntime as ort
+from onnxruntime import SessionOptions
 
 from tqdm import tqdm
 from lib.model_utils import get_hash
@@ -92,9 +93,19 @@ class MDXModel:
         denoise=False,
     ):
         self.device = device
-        self.providers = ["CUDAExecutionProvider", "CPUExecutionProvider"]
-        gpu_memory_limit = 6 * 1024 * 1024 * 1024
-        providers_options = [{"device_id": 0, "cuda_mem_limit": gpu_memory_limit}]
+        self.providers = [
+            (
+                "CUDAExecutionProvider",
+                {
+                    "device_id": 0,
+                    "arena_extend_strategy": "kNextPowerOfTwo",
+                    "gpu_mem_limit": 4 * 1024 * 1024 * 1024,
+                    "cudnn_conv_algo_search": "EXHAUSTIVE",
+                    "do_copy_in_default_stream": True,
+                },
+            ),
+            "CPUExecutionProvider",
+        ]
 
         mp = self.get_params(model_path)
         self.params = MDXParams(
@@ -105,11 +116,9 @@ class MDXModel:
             stem_name=mp["primary_stem"],
             compensation=mp["compensate"],
         )
-
         self.ort = ort.InferenceSession(
             model_path,
             providers=self.providers,
-            providers_options=providers_options,
         )
 
         self.run = lambda spec: self.ort.run(None, {"input": spec.cpu().numpy()})[0]
