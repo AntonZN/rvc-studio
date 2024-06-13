@@ -93,6 +93,8 @@ class MDXModel:
     ):
         self.device = device
         self.providers = ["CUDAExecutionProvider", "CPUExecutionProvider"]
+        gpu_memory_limit = 6 * 1024 * 1024 * 1024
+        providers_options = [{"device_id": 0, "cuda_mem_limit": gpu_memory_limit}]
 
         mp = self.get_params(model_path)
         self.params = MDXParams(
@@ -104,7 +106,11 @@ class MDXModel:
             compensation=mp["compensate"],
         )
 
-        self.ort = ort.InferenceSession(model_path, providers=self.providers)
+        self.ort = ort.InferenceSession(
+            model_path,
+            providers=self.providers,
+            providers_options=providers_options,
+        )
 
         self.run = lambda spec: self.ort.run(None, {"input": spec.cpu().numpy()})[0]
         self.margin = margin
