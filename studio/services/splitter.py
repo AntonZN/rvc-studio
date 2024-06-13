@@ -110,7 +110,7 @@ def split_only(record_id, audio_path):
 def split_only_v2(record_id, audio_path):
     dict_args = {
         "model_path": os.path.join(BASE_MODELS_DIR, "MDXNET/UVR-MDX-NET-vocal_FT.onnx"),
-        "denoise": True,
+        "denoise": False,
         "margin": 44100,
         "chunks": 5,
         "n_fft": 6144,
