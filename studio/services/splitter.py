@@ -112,7 +112,7 @@ def split_only_v2(record_id, audio_path):
         "model_path": os.path.join(BASE_MODELS_DIR, "MDXNET/UVR-MDX-NET-vocal_FT.onnx"),
         "denoise": True,
         "margin": 44100,
-        "chunks": 15,
+        "chunks": 5,
         "n_fft": 6144,
         "dim_t": 8,
         "dim_f": 3072,
@@ -121,7 +121,7 @@ def split_only_v2(record_id, audio_path):
     instrumental_file_path = f"{settings.OUTPUT_FOLDER}/{record_id}/instrumental.mp3"
 
     predictor = Predictor(args=dict_args)
-    vocals, no_vocals, sampling_rate = predictor.predict(audio_path)
+    no_vocals, vocals, sampling_rate = predictor.predict(audio_path)
     os.makedirs(os.path.dirname(instrumental_file_path), exist_ok=True)
     sf.write(
         instrumental_file_path,
