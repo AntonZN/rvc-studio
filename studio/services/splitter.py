@@ -1,9 +1,11 @@
 import os
 import warnings
+import soundfile as sf
 
 import loguru
 import numpy as np
 
+from lib.mdx_new import Predictor
 from lib.separators import MDXNet
 from lib.audio import pad_audio, remix_audio, save_input_audio, load_input_audio
 from lib.utils import gc_collect, get_optimal_threads
@@ -103,3 +105,29 @@ def split_only(record_id, audio_path):
         return vocal_file_path, instrumental_file_path
     except Exception as e:
         loguru.logger.error(e)
+
+
+def split_only_v2(record_id, audio_path):
+    dict_args = {
+        "model_path": os.path.join(BASE_MODELS_DIR, "MDXNET/UVR-MDX-NET-vocal_FT.onnx"),
+        "denoise": True,
+        "margin": 44100,
+        "chunks": 15,
+        "n_fft": 6144,
+        "dim_t": 8,
+        "dim_f": 3072,
+    }
+    vocal_file_path = f"{settings.OUTPUT_FOLDER}/{record_id}/vocal.mp3"
+    instrumental_file_path = f"{settings.OUTPUT_FOLDER}/{record_id}/instrumental.mp3"
+
+    predictor = Predictor(args=dict_args)
+    vocals, no_vocals, sampling_rate = predictor.predict(audio_path)
+
+    sf.write(
+        instrumental_file_path,
+        no_vocals,
+        sampling_rate,
+    )
+    sf.write(vocal_file_path, vocals, sampling_rate)
+
+    return vocal_file_path, instrumental_file_path

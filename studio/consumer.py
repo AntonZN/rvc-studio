@@ -16,7 +16,7 @@ from db_models import Status, RVCModel, Record, TTS, ProcessRequest
 
 from services.cover import create_cover, create_cover_v2
 from services.cloning import clone_only
-from services.splitter import split_only
+from services.splitter import split_only, split_only_v2
 from services.tts import tts as create_tts
 
 
@@ -58,7 +58,7 @@ def process(queue_name, record, model_name, clone_type):
         else:
             record.status = Status.ERROR
     elif queue_name == "split":
-        result = split_only(record.id, record.file_path)
+        result = split_only_v2(record.id, record.file_path)
         if result:
             record.status = Status.DONE
             record.vocal_path = result[0]
