@@ -2,11 +2,7 @@ import os
 
 from enum import IntEnum
 
-import librosa
-import numpy as np
-
 from lib.audio import save_input_audio, load_input_audio
-import soundfile as sf
 from lib.vc_infer_pipeline import get_vc, vc_single
 from services.errors import RVCModelLoadError
 from cfg import get_settings
@@ -75,10 +71,9 @@ def clone_only(
     clone_type=CloneType.DEFAULT.value,
 ):
     cloned_file_path = f"{settings.OUTPUT_FOLDER}/{record_id}/{model_name}.mp3"
-    vocal = librosa.load(audio_path, mono=True, sr=44100)
-
+    vocal = load_input_audio(audio_path, 44100)
     cloned_vocal = clone_vocal(vocal, model_name, clone_type)
-    os.makedirs(os.path.dirname(cloned_file_path), exist_ok=True)
-    sf.write(cloned_file_path, cloned_vocal, 44100)
+
+    save_input_audio(cloned_file_path, cloned_vocal)
 
     return cloned_file_path
