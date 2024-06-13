@@ -112,7 +112,7 @@ def split_only_v2(record_id, audio_path):
         "model_path": os.path.join(BASE_MODELS_DIR, "MDXNET/UVR-MDX-NET-vocal_FT.onnx"),
         "denoise": False,
         "margin": 44100,
-        "chunks": 2,
+        "chunks": 10,
         "n_fft": 6144,
         "dim_t": 8,
         "dim_f": 3072,
