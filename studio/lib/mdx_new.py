@@ -70,21 +70,10 @@ class Predictor:
             dim_t=args["dim_t"],
             n_fft=args["n_fft"],
         )
-        providers = [
-            (
-                "CUDAExecutionProvider",
-                {
-                    "device_id": 0,
-                    "arena_extend_strategy": "kNextPowerOfTwo",
-                    "gpu_mem_limit": 6 * 1024 * 1024 * 1024,
-                    "cudnn_conv_algo_search": "EXHAUSTIVE",
-                    "do_copy_in_default_stream": True,
-                },
-            ),
-            "CPUExecutionProvider",
-        ]
 
-        self.model = ort.InferenceSession(args["model_path"], providers=providers)
+        self.model = ort.InferenceSession(
+            args["model_path"], providers=["CUDAExecutionProvider"]
+        )
 
     def demix(self, mix):
         samples = mix.shape[-1]
