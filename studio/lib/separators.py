@@ -12,7 +12,7 @@ class MDXNet:
     def __init__(
         self,
         model_path,
-        chunks=15,
+        chunks=10,
         denoise=False,
         num_threads=1,
         device="cpu",
@@ -23,7 +23,7 @@ class MDXNet:
 
         self.args = kwargs
         self.denoise = denoise
-        self.num_threads = num_threads
+        self.num_threads = 1
 
         self.device = device
 
