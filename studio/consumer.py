@@ -119,7 +119,8 @@ async def handle(queue_name, amq_message: str):
 
         try:
             process(queue_name, record, model_name, clone_type)
-        except Exception:
+        except Exception as e:
+            print(e)
             record.status = Status.ERROR
 
         await record.save()
