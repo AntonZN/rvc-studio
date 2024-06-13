@@ -122,16 +122,13 @@ def split_only_v2(record_id, audio_path):
 
     predictor = Predictor(args=dict_args)
     vocals, no_vocals, sampling_rate = predictor.predict(audio_path)
-    print(vocals)
-    print(no_vocals)
-    print(sampling_rate)
-    print(f"saving sound to {instrumental_file_path}")
+    os.makedirs(os.path.dirname(instrumental_file_path), exist_ok=True)
     sf.write(
         instrumental_file_path,
         no_vocals,
         sampling_rate,
     )
-    print(f"saving sound to {vocal_file_path}")
+    os.makedirs(os.path.dirname(vocal_file_path), exist_ok=True)
     sf.write(vocal_file_path, vocals, sampling_rate)
 
     return vocal_file_path, instrumental_file_path
