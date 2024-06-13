@@ -75,10 +75,7 @@ def clone_only(
     clone_type=CloneType.DEFAULT.value,
 ):
     cloned_file_path = f"{settings.OUTPUT_FOLDER}/{record_id}/{model_name}.mp3"
-    vocal, rate = librosa.load(audio_path, mono=False, sr=44100)
-
-    if vocal.ndim == 1:
-        vocal = np.asfortranarray([vocal, vocal])
+    vocal = librosa.load(audio_path, mono=False, sr=44100)
 
     cloned_vocal = clone_vocal(vocal, model_name, clone_type)
     os.makedirs(os.path.dirname(cloned_file_path), exist_ok=True)
