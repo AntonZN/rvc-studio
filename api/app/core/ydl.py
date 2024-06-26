@@ -16,7 +16,7 @@ def download_youtube_video_as_mp3(url, output_path, max_duration=300, trim_durat
     os.makedirs(output_path, exist_ok=True)
     loguru.logger.debug(_cache_dir)
     shutil.copyfile(
-        "tokens.json",
+        "/app/app/core/tokens.json",
         "/usr/local/lib/python3.10/site-packages/pytube/__cache__/token.json",
     )
     yt = YouTube(url, use_oauth=True, allow_oauth_cache=True)
