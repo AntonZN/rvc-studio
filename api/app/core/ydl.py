@@ -12,7 +12,7 @@ from fastapi import HTTPException, status
 def download_youtube_video_as_mp3(url, output_path, max_duration=300, trim_duration=30):
     os.makedirs(output_path, exist_ok=True)
     loguru.logger.debug(url)
-    yt = YouTube(url)
+    yt = YouTube(url, use_oauth=False, allow_oauth_cache=True)
     loguru.logger.debug(yt.vid_info)
     time.sleep(1)
     video_duration = yt.length
