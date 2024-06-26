@@ -8,11 +8,13 @@ from pytube import YouTube
 from pydub import AudioSegment
 from fastapi import HTTPException, status
 
+from pytube.innertube import _cache_dir
+
 
 def download_youtube_video_as_mp3(url, output_path, max_duration=300, trim_duration=30):
     os.makedirs(output_path, exist_ok=True)
-    loguru.logger.debug(url)
-    yt = YouTube(url, use_oauth=True, allow_oauth_cache=True)
+    loguru.logger.debug(_cache_dir)
+    yt = YouTube(url, use_oauth=False, allow_oauth_cache=True)
     time.sleep(30)
     video_duration = yt.length
     if video_duration > max_duration:
