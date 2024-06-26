@@ -19,7 +19,7 @@ def download_youtube_video_as_mp3(url, output_path, max_duration=300, trim_durat
         "tokens.json",
         "/usr/local/lib/python3.10/site-packages/pytube/__cache__/token.json",
     )
-    yt = YouTube(url, use_oauth=False, allow_oauth_cache=True)
+    yt = YouTube(url, use_oauth=True, allow_oauth_cache=True)
     video_duration = yt.length
 
     if video_duration > max_duration:
