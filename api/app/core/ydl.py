@@ -13,7 +13,7 @@ def download_youtube_video_as_mp3(url, output_path, max_duration=300, trim_durat
     os.makedirs(output_path, exist_ok=True)
     loguru.logger.debug(url)
     yt = YouTube(url, use_oauth=True, allow_oauth_cache=True)
-    time.sleep(100)
+    time.sleep(30)
     video_duration = yt.length
     if video_duration > max_duration:
         raise HTTPException(
