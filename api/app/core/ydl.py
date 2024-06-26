@@ -9,7 +9,7 @@ from fastapi import HTTPException, status
 
 def download_youtube_video_as_mp3(url, output_path, max_duration=300, trim_duration=30):
     os.makedirs(output_path, exist_ok=True)
-
+    loguru.logger.debug(url)
     try:
         yt = YouTube(url)
 
