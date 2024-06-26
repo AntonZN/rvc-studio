@@ -8,10 +8,6 @@ from pytube import YouTube
 from pydub import AudioSegment
 from fastapi import HTTPException, status
 
-from pytube.innertube import _default_clients
-
-_default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID"]
-
 
 def download_youtube_video_as_mp3(url, output_path, max_duration=300, trim_duration=30):
     os.makedirs(output_path, exist_ok=True)
