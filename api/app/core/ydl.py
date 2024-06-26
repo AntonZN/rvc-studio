@@ -15,9 +15,12 @@ from pytube.innertube import _cache_dir
 def download_youtube_video_as_mp3(url, output_path, max_duration=300, trim_duration=30):
     os.makedirs(output_path, exist_ok=True)
     loguru.logger.debug(_cache_dir)
+    os.makedirs(
+        "/usr/local/lib/python3.10/site-packages/pytube/__cache__", exist_ok=True
+    )
     shutil.copyfile(
         "/app/app/core/tokens.json",
-        "/usr/local/lib/python3.10/site-packages/pytube/__cache__/token.json",
+        "/usr/local/lib/python3.10/site-packages/pytube/__cache__/tokens.json",
     )
     yt = YouTube(url, use_oauth=True, allow_oauth_cache=True)
     video_duration = yt.length
