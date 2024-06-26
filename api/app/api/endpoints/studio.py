@@ -28,6 +28,7 @@ from app.models.records import (
 )
 from app.core.logic import publish_record
 from app.models.rvc import ModelProjectUsage
+from app.core.ydl import download_youtube_video_as_mp3
 
 settings = get_settings()
 router = APIRouter()
@@ -78,6 +79,12 @@ class TTSBody(BaseModel):
     model_id: int = Form(alias="modelId")
     lang: Lang = Lang.EN
     speaker: Optional[Speaker] = Speaker.NULL
+
+
+class CoverFromUrl(BaseModel):
+    url: str
+    clone_type: CloneType = Form(alias="cloneType", default=CloneType.DEFAULT)
+    model_id: int = Form(alias="modelId")
 
 
 def save_file(file):
@@ -231,6 +238,44 @@ async def cover(
 
     await publish_record("cover", publish_data)
     await create_statistics("cover")
+
+    return record
+
+
+@router.post(
+    "/cover_from_url/",
+    response_model=RecordSchema,
+    description=(
+        "Загрузка записи. Используйте `multipart/form-data`. "
+        "В ответ получите `id` записи по которому можно использовать studio"
+        "`cloneType` - тип клонирования, 0 - по умолчанию, 1 - мужчина в женщину, 3 - женщина в мужчину"
+    ),
+)
+async def cover_from_url(body: CoverFromUrl):
+    record_path, filename = download_youtube_video_as_mp3(
+        body.url,
+        settings.UPLOAD_FOLDER,
+        max_duration=300,
+        trim_duration=30,
+    )
+    loguru.logger.debug(f"YOUTUBE {record_path}, {filename}")
+    record = await Record.create(name=filename, file_path=record_path)
+
+    publish_data = {
+        "record_id": str(record.id),
+        "model_id": body.model_id,
+        "type": body.clone_type,
+    }
+    if await ModelProjectUsage.filter(project_id=3, model_id=body.model_id).exists():
+        await ModelProjectUsage.filter(project_id=3, model_id=body.model_id).update(
+            usages=F("usages") + 1
+        )
+    else:
+        await ModelProjectUsage.create(project_id=3, model_id=body.model_id, usages=1)
+
+    await publish_record("cover", publish_data)
+    await create_statistics("cover")
+
     return record
 
 
