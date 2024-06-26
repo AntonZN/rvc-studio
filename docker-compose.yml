@@ -51,6 +51,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - storage:/storage
+      - ./api/tokens.json:/usr/local/lib/python3.10/site-packages/pytube/__cache__/tokens.json
     depends_on:
       - db
       - rabbitmq
