@@ -31,6 +31,10 @@ def download_youtube_video_as_mp3(url, output_path, max_duration=300, trim_durat
             detail="INCORRECT_VIDEO_DURATION"
         )
 
+    raise HTTPException(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        detail=f"DOWNLOAD_ERROR"
+    )
     try:
         video = yt.streams.filter(only_audio=True).first()
         downloaded_file = video.download(output_path=output_path)
