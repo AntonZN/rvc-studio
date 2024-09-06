@@ -255,8 +255,8 @@ async def cover_from_url(body: CoverFromUrl):
     record_path, filename = download_youtube_video_as_mp3(
         body.url,
         settings.UPLOAD_FOLDER,
-        max_duration=300,
-        trim_duration=30,
+        max_duration=420,
+        trim_duration=60,
     )
     loguru.logger.debug(f"YOUTUBE {record_path}, {filename}")
     record = await Record.create(name=filename, file_path=record_path)
