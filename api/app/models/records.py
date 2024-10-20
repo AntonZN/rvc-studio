@@ -56,6 +56,7 @@ class Statistics(Model):
     count_split = fields.IntField()
     count_split_old = fields.IntField()
     count_clone = fields.IntField()
+    count_denoise = fields.IntField()
     average_waiting = fields.CharField(max_length=256)
 
     class Meta:

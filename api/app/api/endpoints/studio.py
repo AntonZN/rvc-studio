@@ -110,6 +110,7 @@ async def create_statistics(process):
                 count_split_old=0,
                 count_cover=0,
                 count_clone=0,
+                count_denoise=0,
                 average_waiting="неизвестно",
             )
 
@@ -123,6 +124,8 @@ async def create_statistics(process):
             stat.count_cover += 1
         elif process == "clone":
             stat.count_clone += 1
+        elif process == "denoise":
+            stat.count_denoise += 1
 
         start_of_day = datetime.datetime.combine(date, datetime.time.min)
         end_of_day = datetime.datetime.combine(date, datetime.time.max)
@@ -261,7 +264,7 @@ async def denoise(
     }
 
     await publish_record("denoise", publish_data)
-
+    await create_statistics("denoise")
     return record
 
 @router.post(
