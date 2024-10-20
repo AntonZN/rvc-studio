@@ -23,8 +23,9 @@ if __name__ == "__main__":
     splitter_process = 1
     cover_process = 1
     tts_process = 1
+    denoise_process = 1
 
-    processes = cover_process + splitter_process + clone_process + tts_process
+    processes = cover_process + splitter_process + clone_process + tts_process + denoise_process
 
     pool = multiprocessing.Pool(processes=processes)
 
@@ -72,7 +73,18 @@ if __name__ == "__main__":
         for i in range(splitter_process)
     ]
 
-    tasks = splitter_consumers + cover_consumers + clone_consumers
+    denoise_consumers = [
+        pool.apply_async(
+            run_async_task,
+            args=(
+                "denoise",
+                i,
+            ),
+        )
+        for i in range(splitter_process)
+    ]
+
+    tasks = splitter_consumers + cover_consumers + clone_consumers + denoise_consumers
 
     pool.close()
     pool.join()
