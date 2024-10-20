@@ -47,6 +47,7 @@ class Statistics(models.Model):
     count_split = models.IntegerField()
     count_split_old = models.IntegerField()
     count_clone = models.IntegerField()
+    count_denoise = models.IntegerField(null=True, blank=True)
     average_waiting = models.CharField(max_length=256)
 
     class Meta:

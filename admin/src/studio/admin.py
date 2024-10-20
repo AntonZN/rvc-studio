@@ -39,6 +39,7 @@ class StatisticsAdmin(admin.ModelAdmin):
         "count_split",
         "count_split_old",
         "count_clone",
+        "count_denoise",
         "average_waiting",
         "average_waiting_old_split",
     )
