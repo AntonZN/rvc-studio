@@ -1,3 +1,5 @@
+import os
+
 from df.enhance import enhance, init_df, load_audio, save_audio
 from cfg import get_settings
 
@@ -9,6 +11,7 @@ def denoise(record_id, audio_path):
     model, df_state, _ = init_df()
     audio, _ = load_audio(audio_path, sr=df_state.sr())
     enhanced = enhance(model, df_state, audio)
+    os.makedirs(os.path.dirname(denoised_file_path), exist_ok=True)
     save_audio(denoised_file_path, enhanced, df_state.sr())
 
     return denoised_file_path
