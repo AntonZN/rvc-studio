@@ -16,6 +16,7 @@ from db_models import Status, RVCModel, Record, TTS, ProcessRequest
 
 from services.cover import create_cover, create_cover_v2
 from services.cloning import clone_only
+from services.noise import denoise
 from services.splitter import split_only, split_only_v2
 from services.tts import tts as create_tts
 
@@ -79,6 +80,17 @@ def process(queue_name, record, model_name, clone_type):
         else:
             record.status = Status.ERROR
 
+    elif queue_name == "denoise":
+        result = denoise(
+            record.id,
+            record.file_path,
+        )
+        if result:
+            record.status = Status.DONE
+            record.denoised_path = result
+            loguru.logger.debug(result)
+        else:
+            record.status = Status.ERROR
     return record
 
 

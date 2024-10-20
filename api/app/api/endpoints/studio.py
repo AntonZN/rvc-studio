@@ -243,6 +243,28 @@ async def cover(
 
 
 @router.post(
+    "/denoise/",
+    response_model=RecordSchema,
+    description=(
+        "Загрузка записи. Используйте `multipart/form-data`. "
+        "В ответ получите `id` записи по которому можно использовать studio"
+    ),
+)
+async def denoise(
+    file: Annotated[UploadFile, File()]
+):
+    record_path = save_file(file)
+    record = await Record.create(name=file.filename, file_path=record_path)
+
+    publish_data = {
+        "record_id": str(record.id),
+    }
+
+    await publish_record("denoise", publish_data)
+
+    return record
+
+@router.post(
     "/cover_from_url/",
     response_model=RecordSchema,
     description=(
@@ -314,7 +336,7 @@ async def create_tts(body: TTSBody):
 )
 async def record_status(record_id: str):
     record = await Record.get(id=record_id)
-    paths_to_update = ["vocal_path", "instrumental_path", "clone_path", "cover_path"]
+    paths_to_update = ["vocal_path", "instrumental_path", "clone_path", "cover_path", "denoised_path"]
 
     for path in paths_to_update:
         if getattr(record, path):

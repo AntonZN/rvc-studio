@@ -23,6 +23,7 @@ class Record(Model):
     instrumental_path = fields.TextField(null=True, blank=True)
     clone_path = fields.TextField(null=True, blank=True)
     cover_path = fields.TextField(null=True, blank=True)
+    denoised_path = fields.TextField(null=True, blank=True)
     created_at = fields.DatetimeField(auto_now_add=True)
 
     class Meta:

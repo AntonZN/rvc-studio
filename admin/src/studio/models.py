@@ -21,6 +21,7 @@ class Record(models.Model):
     instrumental_path = models.TextField(null=True, blank=True)
     clone_path = models.TextField(null=True, blank=True)
     cover_path = models.TextField(null=True, blank=True)
+    denoised_path = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
