@@ -13,3 +13,4 @@ aio-pika
 loguru
 pytube
 pydub
+httpx

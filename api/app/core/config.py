@@ -16,7 +16,8 @@ class Settings(BaseSettings):
     STORAGE_FOLDER: str = os.path.join("/storage")
     UPLOAD_FOLDER: str = os.path.join(STORAGE_FOLDER, "uploads")
     STEMS_FOLDER: str = os.path.join(STORAGE_FOLDER, "stems")
-
+    YTBPRX_TOKEN: str
+    YTBPRX_URL: str
     RABBITMQ_HOST: str = "rabbitmq"
     RABBITMQ_USERNAME: str
     RABBITMQ_PASSWORD: str

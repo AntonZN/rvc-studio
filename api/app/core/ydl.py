@@ -1,7 +1,10 @@
 from pytube import cipher
 import re
-
 from pytube.exceptions import RegexMatchError
+from app.core.config import get_settings
+import loguru
+
+settings = get_settings()
 
 
 def get_throttling_function_name(js: str) -> str:
@@ -14,13 +17,6 @@ def get_throttling_function_name(js: str) -> str:
         The name of the function used to compute the throttling parameter.
     """
     function_patterns = [
-        # https://github.com/ytdl-org/youtube-dl/issues/29326#issuecomment-865985377
-        # https://github.com/yt-dlp/yt-dlp/commit/48416bc4a8f1d5ff07d5977659cb8ece7640dcd8
-        # var Bpa = [iha];
-        # ...
-        # a.C && (b = a.get("n")) && (b = Bpa[0](b), a.set("n", b),
-        # Bpa.length || iha("")) }};
-        # In the above case, `iha` is the relevant function name
         r'a\.[a-zA-Z]\s*&&\s*\([a-z]\s*=\s*a\.get\("n"\)\)\s*&&\s*'
         r"\([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])?\([a-z]\)",
         r"\([a-z]\s*=\s*([a-zA-Z0-9$]+)(\[\d+\])\([a-z]\)",
@@ -55,8 +51,8 @@ cipher.get_throttling_function_name = get_throttling_function_name
 import os
 import time
 import shutil
-
-import loguru
+import httpx
+import aiofiles
 
 from uuid import uuid4
 from pytube import YouTube
@@ -109,3 +105,41 @@ def download_youtube_video_as_mp3(url, output_path, max_duration=300, trim_durat
             os.remove(downloaded_file)
 
     return trimmed_file, file_name
+
+
+async def download_youtube_video_as_mp3_proxy(url, output_path, trim_duration=30):
+    params = {"token": settings.YTBPRX_TOKEN}
+
+    try:
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            # Отправляем запрос на генерацию MP3
+            resp = await client.post(
+                f"{settings.YTBPRX_URL}/api/v1/download",
+                params=params,
+                json={"url": url, "trim_duration": trim_duration},
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            loguru.logger.debug(data)
+
+            dwnl_url = data.get("url")
+            file_name = data.get("file_name")
+
+            if not dwnl_url:
+                raise ValueError("Download URL not found in the response.")
+
+            download_resp = await client.get(dwnl_url)
+            download_resp.raise_for_status()
+
+            output_file_path = f"{output_path}/{file_name}"
+            async with aiofiles.open(output_file_path, "wb") as out_file:
+                await out_file.write(download_resp.content)
+
+            loguru.logger.debug(
+                f"File downloaded successfully: {output_file_path} {file_name}"
+            )
+            return output_file_path, file_name
+
+    except Exception as e:
+        loguru.logger.error(f"ERROR download_youtube_video_as_mp3_proxy, {e}")
+        raise

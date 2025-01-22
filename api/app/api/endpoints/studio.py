@@ -28,7 +28,10 @@ from app.models.records import (
 )
 from app.core.logic import publish_record
 from app.models.rvc import ModelProjectUsage
-from app.core.ydl import download_youtube_video_as_mp3
+from app.core.ydl import (
+    download_youtube_video_as_mp3,
+    download_youtube_video_as_mp3_proxy,
+)
 
 settings = get_settings()
 router = APIRouter()
@@ -253,9 +256,7 @@ async def cover(
         "В ответ получите `id` записи по которому можно использовать studio"
     ),
 )
-async def denoise(
-    file: Annotated[UploadFile, File()]
-):
+async def denoise(file: Annotated[UploadFile, File()]):
     record_path = save_file(file)
     record = await Record.create(name=file.filename, file_path=record_path)
 
@@ -267,6 +268,7 @@ async def denoise(
     await create_statistics("denoise")
     return record
 
+
 @router.post(
     "/cover_from_url/",
     response_model=RecordSchema,
@@ -277,10 +279,9 @@ async def denoise(
     ),
 )
 async def cover_from_url(body: CoverFromUrl):
-    record_path, filename = download_youtube_video_as_mp3(
+    record_path, filename = download_youtube_video_as_mp3_proxy(
         body.url,
         settings.UPLOAD_FOLDER,
-        max_duration=420,
         trim_duration=60,
     )
     loguru.logger.debug(f"YOUTUBE {record_path}, {filename}")
@@ -339,7 +340,13 @@ async def create_tts(body: TTSBody):
 )
 async def record_status(record_id: str):
     record = await Record.get(id=record_id)
-    paths_to_update = ["vocal_path", "instrumental_path", "clone_path", "cover_path", "denoised_path"]
+    paths_to_update = [
+        "vocal_path",
+        "instrumental_path",
+        "clone_path",
+        "cover_path",
+        "denoised_path",
+    ]
 
     for path in paths_to_update:
         if getattr(record, path):
