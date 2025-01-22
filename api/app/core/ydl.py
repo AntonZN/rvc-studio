@@ -111,7 +111,7 @@ async def download_youtube_video_as_mp3_proxy(url, output_path, trim_duration=30
     params = {"token": settings.YTBPRX_TOKEN}
 
     try:
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        async with httpx.AsyncClient(timeout=120.0) as client:
             # Отправляем запрос на генерацию MP3
             resp = await client.post(
                 f"{settings.YTBPRX_URL}/api/v1/download",
