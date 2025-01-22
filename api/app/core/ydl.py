@@ -142,4 +142,6 @@ async def download_youtube_video_as_mp3_proxy(url, output_path, trim_duration=30
 
     except Exception as e:
         loguru.logger.error(f"ERROR download_youtube_video_as_mp3_proxy, {e}")
-        raise
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"DOWNLOAD_ERROR"
+        )
