@@ -279,7 +279,7 @@ async def denoise(file: Annotated[UploadFile, File()]):
     ),
 )
 async def cover_from_url(body: CoverFromUrl):
-    record_path, filename = download_youtube_video_as_mp3_proxy(
+    record_path, filename = await download_youtube_video_as_mp3_proxy(
         body.url,
         settings.UPLOAD_FOLDER,
         trim_duration=60,
